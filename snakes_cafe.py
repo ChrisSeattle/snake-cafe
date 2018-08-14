@@ -54,8 +54,23 @@ MENU = [
         'category': 'Desserts',
         'status': 0,
     },
+    {
+        'item': 'Coffee',
+        'category': 'Drinks',
+        'status': 0,
+    },
+    {
+        'item': 'Tea',
+        'category': 'Drinks',
+        'status': 0,
+    },
+    {
+        'item': 'Blood of the Innocent',
+        'category': 'Drinks',
+        'status': 0,
+    },
 ]
-COURSES = ['Appetizers', 'Entrees', 'Desserts']
+COURSES = ['Appetizers', 'Entrees', 'Desserts', 'Drinks']
 
 
 def greeting():
