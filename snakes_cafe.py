@@ -135,6 +135,7 @@ def goodbye():
         {'** ' + ' ' * ((WIDTH - len(line_b)) // 2 - 3) + line_b + ' ' * (((WIDTH - len(line_b)) // 2 - 3) + len(line_b)%2) + ' **'}
         {'*' * WIDTH}
     '''))
+    sys.exit()
 
 
 def run():
