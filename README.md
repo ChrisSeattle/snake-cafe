@@ -1,6 +1,6 @@
-# snake-cafe
+# snake_cafe
 
-**Author**: Chris L Chapman and
+**Author**: Chris L Chapman
 **Version**: 1.0.0 (increment the patch/fix version number up if you make more commits past your first submission)
 
 ## Overview
