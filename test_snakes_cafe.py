@@ -1,13 +1,13 @@
-from .snakes_cafe import get_menu
-from .snakes_cafe import get_order
-from .snakes_cafe import parse_user_input
+from .snakes_cafe import get_menu, parse_user_input, get_order
+# from .snakes_cafe import get_menu
+# from .snakes-cafe import get_order
+# from .snakes-cafe import parse_user_input
 
 
 # greeting() only has a print output. No additional testing.
 # show_menu() only does a print of output. No additonal testing.
 # display_order() only has print output. No additional testing.
 # goodybye only() has print output. No additonal testing.
-
 
 def test_get_menu_exists():
     """get_menu allows us to import a cvs file that holds the data of our menu.

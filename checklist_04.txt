@@ -1,0 +1,35 @@
+### Features & Process Checklist
+
+General Process:
+- [x] New branch as directed
+- [ ] directory, starter files, and general setup
+- [x] Create an updated feature checklist to use at submission time
+- [ ] Timestamp feature completions and notable update moments.
+- [x] Docstring to all functions in main and test files.
+- [?] Keep functions small, concise, and testable
+- [ ] Update the readme file
+- [x] Update the checklist
+- [ ] Create tests for all functionality of the program.
+- [ ] Have tests for all functions except __name__ block, and simple prinout functions
+- [ ] List out in words each test I intend to write
+- [ ] If (when) I change my tests, update my test_plan.md file
+- [ ] For each test, name the function or functions I intend to call and test
+
+Current Features and Goals for our Code:
+
+
+Previous Features and Goals:
+- [?]  Ability to provide a seperate file as a menu with help text
+- [x] Every menu category should have at least 9 items
+- [x] Optional seperate menu is comma-seperated and saved as .csv
+- [x] menu file: name (str), category (str), price (float), and quantity (int) referring to the in-stock amount of that item.
+- [ ] alert user if inported file is not .csv file.
+- [x] When user adds items to their order, they can also give a quantity, but if no quantity given, assume add 1
+- [x] Alert user if they are attempting to order more than we have in stock.
+- [x] Alert user if they try to remove or add an item not on current menu
+- [x]  Alert user if they try to remove an item they don't have in their order
+- [?]  Hide all traceback messages from user, including keyboard interupt
+
+* Old Tests not Done Yet *
+- [ ] Every order gets a universally unique identifier
+- [ ] If user types remove <item>, remove 1 of the that <item> from their order
