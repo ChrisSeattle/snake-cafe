@@ -1,0 +1,31 @@
+### Features & Process Checklist
+
+General Process:
+- [ ] New branch as assigned (so it is where they expect it)
+- [ ] directory, starter files, and general setup
+- [ ] Create an updated feature checklist to use at submission time
+- [ ] Timestamp feature completions and notable update moments.
+- [ ] Docstring to all functions in main and test files.
+- [ ] Keep functions small, concise, and testable
+- [ ] Update the readme file
+- [ ] Update the checklist with goal features
+- [ ] Create tests for all functionality of the program.
+- [ ] Have tests for all functions except __name__ block, and simple prinout functions
+- [ ] List out in words each test I intend to write
+- [ ] If (when) I change my tests, update my test_plan.md file
+- [ ] For each test, name the function or functions I intend to call and test
+
+Current Features and Goals for our Code:
+- [ ] 
+- [ ] 
+- [ ] 
+- [ ] 
+- [ ] 
+
+
+Previous Features and Goals:
+- [ ] 
+- [ ] 
+- [ ] 
+- [ ] 
+- [ ] 
