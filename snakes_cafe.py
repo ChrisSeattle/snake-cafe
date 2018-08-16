@@ -5,7 +5,8 @@ import sys
 CURRANCY = '$'
 SALES_TAX = 0.101
 WIDTH = 78
-MENU = [
+MENU_FILE = 'menu_file.csv'
+BACKUP_MENU = [
     {
         'item': 'Wings',
         'category': 'Appetizers',
@@ -228,13 +229,19 @@ def show_menu(selection):
     '''))
 
 
-def get_order(select):
-    """Takes in a value that exists in our MENU item names.
+def get_order(select, quantity):
+    """Takes in a value that exists in our MENU item names (this has been checked before this was called)
+    Also takes in a quantity of how many the user wants to add (often 1, but could be any integer)
+    We need to check if going to exceed the total stock we have of that item.
+    In here we will deal with output if their order is exceeding our stock
     It then adds this item to the user's order.
     """
     for option in MENU:
         if select == option['item'].lower():
-            option['status'] += 1
+            if option['status'] + quantity > option['stock']:
+                print("I'm sorry but we don't have enough of those left to add that to your order")
+                return
+            option['status'] += quantity
             # user_cost += option['price']
             # perhaps we deal with total cost later on.
             print('** You have', option['status'], 'order(s) of', option['item'], 'for your meal **')
@@ -245,13 +252,7 @@ def display_order():
     """This displays the current state of what the user is ordering and
     the current total cost of that order.
     """
-    # food_list = ''
     user_cost = 0
-    # food_list = [food['item'] for food in MENU if food['status'] > 0]
-    # for food in MENU:
-    #     if food['status'] > 0:
-    #         food_list += food['item']
-    #         user_cost += food['price'] * food['status']
     # The printout formatting maybe should be moved to an external function
     line1 = 'Here is your current order.'
     line2 = "You can 'quit', 'delete <item>', or view 'menu', 'order'"
@@ -295,6 +296,54 @@ def goodbye():
     sys.exit()
 
 
+def get_menu(new_menu):
+    """This will pull up the menu in the csv file noted in the constant declares.
+    If for some reason this file cannot be opened, we will use the DEFAULT_MENU
+    as our backup version for MENU.
+    MENU_FILE order is 'item', 'category', 'price', 'stock'
+    """
+    menu_made = []
+    # data_order = ['item', 'category', 'price', 'stock']
+    try: # try-except allows us to hide the error stack from user
+        with open(new_menu, 'r') as f:
+            counter = 0
+            for line in f:
+                food = {}
+                i, c, p, s = line.split(', ')
+                food['item'] = str(i)
+                food['category'] = str(c)
+                food['price'] = float(p)
+                food['stock'] = int(s)
+                food['status'] = 0 #Initialze the count for how many the user has selected
+                menu_made.append(food)
+        # Not neccassary to 'close()' a file when using 'with'
+    except FileNotFoundError:
+        print('There was an error locating the file resource. We are using the default menu')
+        menu_made = BACKUP_MENU
+        for food in menu_made:
+            food['stock'] = 10 # if we are using our backup menu, assume we have 10 of each item since it does not store that info
+    return menu_made
+
+def delete_item(select):
+    """This will decrease the quantity of the given menu item from the
+    user's current selection. We have already made sure the input is a
+    valid menu item. However, we have not yet checked if the user
+    actually has any selected to purchase (be careful not to decrease
+    below zero).
+    """
+    for food in MENU:
+        if food['item'].lower() == select:
+            if food['status'] == 0:
+                print("Oh, it seems you don't have any", select, "so I don't need to remove anything")
+                return 'not_present'
+            food['status'] -= 1
+            print('I have removed one', select, 'from your order')
+            if food['status'] == 0:
+                print('You have no', select, 'in your order')
+            else:
+                print('** You have', food['status'], 'order(s) of', food['item'], 'for your meal **')
+
+
 def parse_user_input():
     """ Gets an input from the user. Determines if it is a special command,
     and if so, calls the appropriate function. This is first called after
@@ -304,31 +353,49 @@ def parse_user_input():
     1 item in their order, to view their current order and total, or to quit
     """
     select = ''
+    quantity = 0
     while select != 'quit':
+        bad_input = False
         select = str(input()).lower()
         if select == 'quit':
             return
-        elif select == 'menu' or select.capitalize() in COURSES:
+        if select == 'menu' or select.capitalize() in COURSES:
             show_menu(select.capitalize())
         elif select == 'order':
             display_order() #disply their current order and total
         elif select in [elem['item'].lower() for elem in MENU]:
-            get_order(select)
-        # we need to try to split the command to see if it is delete, item pair
-        elif select == 'delete': #starts with delete
-            # remove 1 item of this kind
-            #display their current order and total
-            pass
+            get_order(select, 1)
         else:
-            #user input did not match any of the valid inputs.
+            # we need to try to split the command to see if it is delete, item pair or if it is add-item, quantity
+            if select.split()[0] == 'delete':
+                command, *item_select = select.split()
+                item_name = ' '.join(item_select)
+                if item_name in [elem['item'].lower() for elem in MENU]:
+                    delete_item(item_name)
+                else: bad_input = True
+            else:
+                lst = select.split()
+                try:
+                    quantity = int(lst[-1])
+                    item_name = ' '.join(lst[:-1])
+                    if item_name in [elem['item'].lower() for elem in MENU]:
+                        get_order(item_name, quantity)
+                    else:
+                        bad_input = True
+                except:
+                    bad_input is True
+                    quantity = 0
+        if bad_input is True:
             print('** Sorry, I am not sure I understood what you wanted **')
 
 
 def run():
     """This is the main function, which calls the other functions to do the main work
     """
+    global MENU
+    MENU = get_menu(MENU_FILE)
     greeting()
-    show_menu('Menu')
+    show_menu('menu')
     parse_user_input() #This does most of our programs work
     goodbye()
 

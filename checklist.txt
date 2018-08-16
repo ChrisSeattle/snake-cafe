@@ -1,28 +1,27 @@
 ### Features Checklist
 
-- [x]  New branch: class-02-tdd
-- [x]  Create a feature checklist to use at submission time
-- [x]  create test_plan.md
-- [ ]  List out in words each test I intend to write
-- [ ]  For each test, name the function or functions I intend to call and test
-- [ ]  If (when) I change my tests, update my test_plan.md file
-- [x]  The snakes_cafe.py program should add a "Sides" category
-- [x]  Every menu category should have at least 6 items
-- [x]  Each item should get a price, and use a currency symbol
-- [x]  When the user adds an order, also update their current price
-- [x]  When user types "order", their current entire order is listed
-- [ ]  Every order gets a universally unique identifier
-- [x]  Apply and display the sales tax (10.1%) in the order printout
-- [x]  if user types "menu", reprint the entire menu
-- [x]  If user types any category name, print items in that category
-- [ ]  If user types remove <item>, remove 1 of the that <item> from their order
-- [x]  All input should be case-insensitive
-- [?]  Keep functions small, concise, and testable
-- [ ]  Have tests for all functions except __name__ block, and simple prinout functions
-- [ ]  Update the readme file
-- [ ]  Update the checklist
-- [x]  Add docstring to all functions in snakes_cafe.py
+- [x] New branch as directed
+- [x] Create a feature checklist to use at submission time
+- [?]  Ability to provide a seperate file as a menu with help text
+- [x] Every menu category should have at least 9 items
+- [x] Optional seperate menu is comma-seperated and saved as .csv
+- [x] menu file: name (str), category (str), price (float), and quantity (int) referring to the in-stock amount of that item.
+- []  alert user if inported file is not .csv file.
+- [x] When user adds items to their order, they can also give a quantity, but if no quantity given, assume add 1
+- [x] Alert user if they are attempting to order more than we have in stock.
+- [x] Alert user if they try to remove or add an item not on current menu
+- [x]  Alert user if they try to remove an item they don't have in their order
+- [?]  Hide all traceback messages from user, including keyboard interupt
+- [x] docstring to all functions in snakes_cafe.py
+- []  Update the readme file
+- [x] Update the checklist
+- [?] Keep functions small, concise, and testable
 
-
-
-
+* Old Tests not Done Yet *
+- []  Create tests for all functionality of the program.
+- []  List out in words each test I intend to write
+- []  For each test, name the function or functions I intend to call and test
+- []  If (when) I change my tests, update my test_plan.md file
+- []  Every order gets a universally unique identifier
+- []  If user types remove <item>, remove 1 of the that <item> from their order
+- []  Have tests for all functions except __name__ block, and simple prinout functions
