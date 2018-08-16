@@ -2,7 +2,7 @@
 
 - [x] New branch as directed
 - [x] Create a feature checklist to use at submission time
-- []  Ability to provide a seperate file as a menu with help text
+- [?]  Ability to provide a seperate file as a menu with help text
 - [x] Every menu category should have at least 9 items
 - [x] Optional seperate menu is comma-seperated and saved as .csv
 - [x] menu file: name (str), category (str), price (float), and quantity (int) referring to the in-stock amount of that item.
