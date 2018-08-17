@@ -1,0 +1,126 @@
+### Features & Process Checklist
+
+Code 01:
+
+- [x] Create a repository with the exact name of snakes-cafe [edit, should be: snakes_cafe].
+- [x] Start a branch in your snakes-cafe [edit, should be: snakes_cafe] repository called class-01-init
+- [x] Create a new virtual environment where we can locally scope our project installations and dependencies
+- [x] Create a file called snakes_cafe.py
+- [x] Write a README.mnd file describing the program and how to run it. See the README guidelines for tips on how to write an appropriate README.md. Without a well documented and updated README.md you will lose 20% credit on the assignment.
+- [x] When run, the program should print an intro message and the menu for the restaurant
+- [x] The restaurant’s menu should include appetizers, entrees, desserts, and beverages. At least 3 in each category
+- [x] The program should prompt the user for an order
+- [x] When a user enters an item, the program should print an acknowledgment of their input
+- [x] The program should tell the user how to exit
+- [x] Create a checklist to list the specifications
+
+Code 02:
+- [x] Branch name: class-02-tdd
+- [x] Create a markdown document called test_plan.md in your snakes-cafe repository on today’s branch.
+- [ ] Test Plan: List out in words each test that you intend to write
+- [ ] Test: For each test that you intend to write, name the function or functions that you intend to call and test
+- [ ] Test: If you change your tests, update your test plan
+- [x] Your menu should get a “Sides” category
+- [x] Every menu category should have at least 6 items
+- [x] Your menu items should all get prices. Use whatever currency symbol you want, but make sure that the user knows what the prices and currencies are.
+- [ ] Whenever the user adds an item to their order, they’re notified of the total cost of their order up to that point.
+- [ ] If the user types order, their entire order is printed to the console. For example:
+        Each item, (perhaps quantity), price for that food item
+        Subtotal, Sales Tax, Total all listed. Currency sign for all listing of money
+- [ ] Every order should get a universally unique identifier. Consider using the uuid package
+- [x] In the order printout you must include sales tax (9.6% in Seattle as of 2018) in the final total (round up to 2 decimal places)
+- [ ] In the order printout, all of the costs should be right-justified, and all of the item names should be left-justified
+- [ ] If the user types menu, the entire menu is printed to the console
+- [ ] If the user types the name of any of your categories, the items in that category should be printed to the console
+- [ ] If the user types remove <ITEM NAME>, 1 item of the type <ITEM NAME> should be removed from their order, and their order’s total should be printed to the screen
+- [ ] All input should be case-insensitive
+- [ ] Keep your functions small, concise, and testable.
+- [ ] Testing: Every function that you write should be tested and documented. The only functions that are exempt are the ones that take print strings to stdout (they don’t return anything). Also, the if __name__ == '__main__' block does not need to be tested
+- [ ] Create a checklist to list the specifications
+
+Code 03:
+- [ ] Branch name: class-03-robust.
+- [ ] Every menu category should have at least 9 items
+- [ ] Add to your snakes-cafe project the option to provide a separate file as a menu with the appropriate help text (see Lecture 01). If this option isn’t used, the menu you’ve been building all week will be used.
+- [ ] The optional separate menu must be a comma-separated value (.csv) file, where each row includes the menu item’s name (str), category (str), price (float), and quantity (int) referring to the in-stock amount of that item.
+- [ ] If the provided separate menu file isn’t a CSV file, alert the user with an appropriate error message. Note: the user should never see an actual Python Exception
+- [ ] When the user adds an item to their order, they should have the option of providing the quantity as well.
+- [ ] If they don’t provide the quantity, a quantity of 1 is assumed.
+- [ ] If the quantity they provide is invalid (negative or not a number), alert the user with an appropriate error message
+- [ ] If the quantity they provide is beyond whatever is left in stock, alert the user with an appropriate error message.
+- [ ] If the user tries to add/remove an item that isn’t on whatever menu has been loaded, alert the user with an appropriate error message
+- [ ] If the user tries to remove an item that isn’t a part of their order, alert the user with an appropriate error message
+- [ ] No matter what, the user should never see a traceback. Not even for a Keyboard Interrupt.
+- [ ] Testing: Every bit of functionality that you add should be tested.
+- [ ] Testing: As a general rule at this time, you should have a test for valid, invalid, and edge case variants for every function that you define. There are exceptions. The exceptions are not the rule.
+- [ ] Create a checklist to list the specifications
+
+Code 04:
+- [ ] Branch name: class-04-objects.
+- [ ] Create an Order class. Whatever means you were using to build orders before, replace them with methods and attributes belonging to this class.
+- [ ] Every Order should have a uuid
+- [ ] Every Order should have an add_item method that takes an item name and a quantity as arguments. There should be a default value for quantity if none is given.
+- [ ] Every Order should have a remove_item method that takes an item name and a quantity as arguments. There should be a default value for quantity if none is given.
+- [ ] Every Order should have a display_order() method that prints the user’s current order to the console
+- [ ] Every Order should have a print_receipt() method that creates a file containing the text of the user’s full order. The file name should be of the format order-<the uuid>.txt and should have the same output as display_order
+- [ ] All of the order input-checking that you used to do will be done by this class
+- [ ] The repr of Order instances should look like <Order #ba99d8... | Items: 4 | Total: $754.23>
+- [ ] When print() is called on an order instance, the user’s current order is printed as if display_order was called.
+- [ ] When len() is called on an order instance, the number of items in the order is returned
+- [ ] You may have as many helper methods as you want. However, make sure that any attributes and methods that aren’t intended for public use are prefixed with a single underscore
+- [ ] All of your methods should be narrow in scope
+- [ ] Testing: Every bit of functionality that you add should be tested.
+- [ ] Testing: As a general rule at this time, you should have a test for valid, invalid, and edge case variants for every function that you define. There are exceptions. The exceptions are not the rule.
+- [ ] (optional) Every menu category should have at least 12 items
+- [x] Create a checklist to list the specifications
+
+
+======================
+
+Current Features and Goals for our Code:
+- [ ] Create an Order class (for customer's order). Whatever means you were using to build orders before, replace them with methods and attributes belonging to this class.
+- [ ] Every Order should have a uuid
+- [ ] Every Order should have an add_item method that takes an item name and a quantity as arguments. There should be a default value for quantity if none is given.
+- [ ] Every Order should have a remove_item method that takes an item name and a quantity as arguments. There should be a default value for quantity if none is given.
+- [ ] Every Order should have a display_order() method that prints the user’s current order to the console
+- [ ] Every Order should have a print_receipt() method that creates a file containing the text of the user’s full order. The file name should be of the format order-<the uuid>.txt and should have the same output as display_order
+- [ ] All of the order input-checking that you used to do will be done by this class
+- [ ] The repr of Order instances should look like <Order #ba99d8... | Items: 4 | Total: $754.23>
+- [ ] When print() is called on an order instance, the user’s current order is printed as if display_order was called.
+- [ ] When len() is called on an order instance, the number of items in the order is returned
+- [ ] You may have as many helper methods as you want. However, make sure that any attributes and methods that aren’t intended for public use are prefixed with a single underscore
+- [ ] All of your methods should be narrow in scope
+- [ ] Testing: Every bit of functionality that you add should be tested.
+- [ ] Testing: As a general rule at this time, you should have a test for valid, invalid, and edge case variants for every function that you define. There are exceptions. The exceptions are not the rule.
+- [ ] (optional) Every menu category should have at least 12 items
+
+General Process:
+- [x] New branch as directed
+- [x] directory, starter files, and general setup
+- [x] Create an updated feature checklist to use at submission time
+- [ ] Timestamp feature completions and notable update moments.
+- [ ] Docstring to all functions in main and test files.
+- [ ] Keep functions small, concise, and testable
+- [ ] Update the readme file
+- [ ] Update the checklist
+- [ ] Create tests for all functionality of the program.
+- [ ] Have tests for all functions except __name__ block, and simple prinout functions
+- [ ] List out in words each test I intend to write
+- [ ] If (when) I change my tests, update my test_plan.md file
+- [ ] For each test, name the function or functions I intend to call and test
+
+Previous Features and Goals:
+- [?]  Ability to provide a seperate file as a menu with help text
+- [x] Every menu category should have at least 9 items
+- [x] Optional seperate menu is comma-seperated and saved as .csv
+- [x] menu file: name (str), category (str), price (float), and quantity (int) referring to the in-stock amount of that item.
+- [ ] alert user if inported file is not .csv file.
+- [x] When user adds items to their order, they can also give a quantity, but if no quantity given, assume add 1
+- [x] Alert user if they are attempting to order more than we have in stock.
+- [x] Alert user if they try to remove or add an item not on current menu
+- [x]  Alert user if they try to remove an item they don't have in their order
+- [?]  Hide all traceback messages from user, including keyboard interupt
+
+* Old Tests not Done Yet *
+- [ ] Every order gets a universally unique identifier
+- [ ] If user types remove <item>, remove 1 of the that <item> from their order
