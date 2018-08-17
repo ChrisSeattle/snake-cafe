@@ -14,7 +14,7 @@ Create a menu and food ordering program to help learn some Python.
 
 - The program should prompt the user for an order
 
-- [x]  All input should be case-insensitive
+- All input is case-insensitive
 
 - When a user enters an item, the program should print an acknowledgment of their input
 
