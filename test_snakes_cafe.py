@@ -1,4 +1,4 @@
-from .snakes_cafe import get_menu, parse_user_input, get_order
+from .snake_cafe import get_menu, parse_user_input, get_order
 # from .snakes_cafe import get_menu
 # from .snakes-cafe import get_order
 # from .snakes-cafe import parse_user_input

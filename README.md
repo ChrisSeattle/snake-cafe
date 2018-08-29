@@ -14,7 +14,7 @@ Create a menu and food ordering program to help learn some Python.
 
 - The program should prompt the user for an order
 
-- [x]  All input should be case-insensitive
+- All input is case-insensitive
 
 - When a user enters an item, the program should print an acknowledgment of their input
 
@@ -67,3 +67,6 @@ Currently no external API is needed (I believe).
 2018-08-14 [unsure] - Add prices and sales tax, ability to view order with costs, user can also show the full menu or sub-sections of the menu.
 
 2018-08-15 [unsure] - program can inport a csv file and use that for the menu instead of the default hard coded on in the file. User can delete one item (and alert is given if input is not currently in the user's order). The user can also select multiples for
+
+2018-08-16 17:59:46 - Update checklist for requested features on day and lab 04
+

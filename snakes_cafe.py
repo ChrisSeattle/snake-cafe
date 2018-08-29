@@ -1,9 +1,9 @@
 from textwrap import dedent
 import sys
 
-
+USER_TOTAL = 0
 CURRANCY = '$'
-SALES_TAX = 0.101
+SALES_TAX = 0.096
 WIDTH = 78
 MENU_FILE = 'menu_file.csv'
 BACKUP_MENU = [
@@ -260,12 +260,19 @@ def display_order():
         {'*' * WIDTH}
         {'** ' + ' ' * ((WIDTH - len(line1)) // 2 - 3) + line1 + ' ' * (((WIDTH - len(line1)) // 2 - 3) + len(line1)%2) + ' **'}
         {'-' * WIDTH}
+        {' Item' + ' ' * ((WIDTH - 44) // 2 + 6 ) + 'Quantity' + ' ' * ( WIDTH // 2 + (WIDTH - 44) % 2 - 3 ) + 'Price'}
     '''))
     for options in MENU:
         if options['status'] > 0:
             user_cost += options['status'] * options['price']
-            line = 'You have ' + str(options['status']) + ' orders of ' +  options['item'] + ' for ' + CURRANCY + str(options['price'] * options['status'])
-            print('** ' + ' ' * ((WIDTH - len(line)) // 2 - 3) + line + ' ' * (((WIDTH - len(line)) // 2 - 3) + len(line)%2) + ' **')
+            # remain_width = WIDTH - (len(options['items']) + len(options['status']) + 11)
+            # 25 to 30 for item, 5 for status, 8 for money
+            line = '{:30}'.format(options['item']) + '{:^6}'.format(options['status']) + ' ' * (WIDTH - 42) + CURRANCY + '{:>5}'.format('{:.2f}'.format(options['price']))
+            print(dedent(f''' {line} '''))
+
+            # print(line)
+            # line = 'You have ' + str(options['status']) + ' orders of ' +  options['item'] + ' for ' + CURRANCY + str(options['price'] * options['status'])
+            # print('** ' + ' ' * ((WIDTH - len(line)) // 2 - 3) + line + ' ' * (((WIDTH - len(line)) // 2 - 3) + len(line)%2) + ' **')
             # print(dedent(f'''
             #     {'** ' + ' ' * ((WIDTH - len(line)) // 2 - 3) + line + ' ' * (((WIDTH - len(line)) // 2 - 3) + len(line)%2) + ' **'}
             # '''))
@@ -344,7 +351,7 @@ def delete_item(select):
                 print('** You have', food['status'], 'order(s) of', food['item'], 'for your meal **')
 
 
-def parse_user_input():
+def parse_user_input(user_total):
     """ Gets an input from the user. Determines if it is a special command,
     and if so, calls the appropriate function. This is first called after
     the user initially sees the menu. It can handle the 'quit' command to
@@ -356,7 +363,7 @@ def parse_user_input():
     quantity = 0
     while select != 'quit':
         bad_input = False
-        select = str(input()).lower()
+        select = str(input('<: ')).lower()
         if select == 'quit':
             return
         if select == 'menu' or select.capitalize() in COURSES:
@@ -388,6 +395,7 @@ def parse_user_input():
         if bad_input is True:
             print('** Sorry, I am not sure I understood what you wanted **')
 
+return user_total 
 
 def run():
     """This is the main function, which calls the other functions to do the main work
@@ -396,7 +404,7 @@ def run():
     MENU = get_menu(MENU_FILE)
     greeting()
     show_menu('menu')
-    parse_user_input() #This does most of our programs work
+    parse_user_input(USER_TOTAL) #This does most of our programs work
     goodbye()
 
 
