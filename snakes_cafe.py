@@ -1,13 +1,7 @@
 from textwrap import dedent
 import sys
 
-def translate():
-    for food in MENU:
-        print(', '.join(food['item'], food['category'], food['price'], 10))
-
-
-
-
+USER_TOTAL = 0
 CURRANCY = '$'
 SALES_TAX = 0.096
 WIDTH = 78
@@ -357,7 +351,7 @@ def delete_item(select):
                 print('** You have', food['status'], 'order(s) of', food['item'], 'for your meal **')
 
 
-def parse_user_input():
+def parse_user_input(user_total):
     """ Gets an input from the user. Determines if it is a special command,
     and if so, calls the appropriate function. This is first called after
     the user initially sees the menu. It can handle the 'quit' command to
@@ -401,6 +395,7 @@ def parse_user_input():
         if bad_input is True:
             print('** Sorry, I am not sure I understood what you wanted **')
 
+return user_total 
 
 def run():
     """This is the main function, which calls the other functions to do the main work
@@ -409,7 +404,7 @@ def run():
     MENU = get_menu(MENU_FILE)
     greeting()
     show_menu('menu')
-    parse_user_input() #This does most of our programs work
+    parse_user_input(USER_TOTAL) #This does most of our programs work
     goodbye()
 
 
