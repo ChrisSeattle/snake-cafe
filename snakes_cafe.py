@@ -256,9 +256,19 @@ def get_order(select, quantity):
             option['status'] += quantity
             item_cost = option['price'] * option['status']
             # perhaps we deal with total cost later on.
-            print('** You have', option['status'], 'order(s) of', option['item'], 'adding', CURRANCY, item_cost, 'for your meal **')
+            print('** You have', option['status'], 'order(s) of', option['item'], 'adding', CURRANCY, '{:.2f}'.format(item_cost), 'for your meal **')
             log = f"{option['item']} | {option['status']} | {item_cost}"
     return log
+
+def current_sub_total():
+    """ We want to return current sub-total afer every command
+    """
+    user_cost = 0
+    for options in MENU:
+        if options['status'] > 0:
+            user_cost += options['status'] * options['price']
+    # [user_cost += food['status'] * food['price'] for food in MENU]
+    return user_cost
 
 
 def display_order():
@@ -441,7 +451,8 @@ def run():
         select = parse_user_input(select)  # This does most of our programs work
         if select.split(' ')[0] == 'bad':
             print('** Sorry, I am not sure I understood what you wanted **')
-        print(sel)
+        print(select)
+        print('Current Sub-Total: ', CURRANCY, '{:.2f}'.format(current_sub_total()))
     goodbye()
 
 

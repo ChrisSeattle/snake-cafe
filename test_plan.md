@@ -1,12 +1,12 @@
 # snake_cafe_test_plan
 
-parse_user_input, get_order
-
-The following functions will not have testing at this time.
+The following functions will not have testing at this time, along with reasons.
 
 - greeting() only has a print output. No additional testing.
 
 - show_menu() only does a print of output. No additonal testing.
+
+- current_sub_total() takes no inputs. Operates on current order state
 
 - display_order() only has print output. No additional testing.
 
@@ -33,6 +33,4 @@ remove_item()
     after a few of a certain item have been added, does this decrement the count
     does it manage when passed an invalid MENU item
 
-
 **Author**: Chris L Chapman
-

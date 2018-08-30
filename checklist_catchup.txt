@@ -17,9 +17,9 @@ Code 01:
 Code 02:
 - [x] Branch name: class-02-tdd
 - [x] Create a markdown document called test_plan.md in your snakes-cafe repository on today’s branch.
-- [ ] Test Plan: List out in words each test that you intend to write
-- [ ] Test: For each test that you intend to write, name the function or functions that you intend to call and test
-- [ ] Test: If you change your tests, update your test plan
+- [x] Test Plan: List out in words each test that you intend to write
+- [x] Test: For each test that you intend to write, name the function or functions that you intend to call and test
+- [x] Test: If you change your tests, update your test plan
 - [x] Your menu should get a “Sides” category
 - [x] Every menu category should have at least 6 items
 - [x] Your menu items should all get prices. Use whatever currency symbol you want, but make sure that the user knows what the prices and currencies are.
@@ -35,7 +35,7 @@ Code 02:
 - [x] If the user types remove <ITEM NAME>, 1 item of the type <ITEM NAME> should be removed from their order, and their order’s total should be printed to the screen
 - [x] All input should be case-insensitive
 - [x] Keep your functions small, concise, and testable.
-- [ ] Testing: Every function that you write should be tested and documented. The only functions that are exempt are the ones that take print strings to stdout (they don’t return anything). Also, the if __name__ == '__main__' block does not need to be tested
+- [x] Testing: Every function that you write should be tested and documented. The only functions that are exempt are the ones that take print strings to stdout (they don’t return anything). Also, the if __name__ == '__main__' block does not need to be tested
 - [x] Create a checklist to list the specifications
 
 Code 03:
