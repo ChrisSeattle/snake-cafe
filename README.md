@@ -1,12 +1,13 @@
 # snake_cafe
 
 **Author**: Chris L Chapman
-**Version**: 1.0.0 (increment the patch/fix version number up if you make more commits past your first submission)
+**Version**: 1.2.0 (increment the patch/fix version number up if you make more commits past your first submission)
 
 ## Overview
+
 Create a menu and food ordering program to help learn some Python.
 
-###Features:
+## Features
 
 - When run, the program should print an intro message and the menu for the restaurant.
 
@@ -52,16 +53,21 @@ Create a menu and food ordering program to help learn some Python.
 - [Not done] (day 02) User can remove 1 item they had previously added.
 
 ## Getting Started
+
 git clone https://github.com/ChrisSeattle/snake-cafe.git
 unsure what else we should put in here.
 
 ## Architecture
+
 Python 3.6
 
 ## API
+
 Currently no external API is needed (I believe).
 
 ## Change Log
+<!-- ctrl - shift - i to insert timestamp -->
+
 2018-08-13 20:59:53 - Setup default settings files as given from Code 401 class. Create the repo, clone it, create a new branch to edit.
 
 2018-08-14 [unsure] - Add prices and sales tax, ability to view order with costs, user can also show the full menu or sub-sections of the menu.
@@ -69,4 +75,6 @@ Currently no external API is needed (I believe).
 2018-08-15 [unsure] - program can inport a csv file and use that for the menu instead of the default hard coded on in the file. User can delete one item (and alert is given if input is not currently in the user's order). The user can also select multiples for
 
 2018-08-16 17:59:46 - Update checklist for requested features on day and lab 04
+
+2018-08-29 11:34:56 - Going back to implement unfinshed features for version 02.
 

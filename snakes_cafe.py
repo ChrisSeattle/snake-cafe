@@ -1,12 +1,17 @@
 from textwrap import dedent
+import uuid
 import sys
 
-USER_TOTAL = 0
+
+# USER_TOTAL = 0
 CURRANCY = '$'
 SALES_TAX = 0.096
 WIDTH = 78
+SUB_TOTAL = 0
 MENU_FILE = 'menu_file.csv'
-BACKUP_MENU = [
+# for future features.
+# Change old default MENU to BACKUP_MENU, and have MENU variable assignable
+MENU = [
     {
         'item': 'Wings',
         'category': 'Appetizers',
@@ -88,8 +93,8 @@ BACKUP_MENU = [
     {
         'item': 'Cake',
         'category': 'Desserts',
-         'price': 8.00,
-       'status': 0,
+        'price': 8.00,
+        'status': 0,
     },
     {
         'item': 'Pie',
@@ -211,54 +216,75 @@ def greeting():
 
 def show_menu(selection):
     """Function can display all item on the menu, or all items
-    in a specific category of the menu if requested by user input.
+        in a specific category of the menu if requested by user input.
+        The parameter it takes is for later features. Currently this
+        appliation is set to load the default as expected at this stage.
     """
     display = [selection]
-    if selection.lower() == 'menu':
+    if selection.lower() == 'menu':  # default setting used for early stages of this app
         display = COURSES
     for section in display:
-        print('\n** ' , section, '\n** ', '-' * 8)
+        print('\n** ', section, '\n** ', '-' * 8)
         for option in MENU:
             if option['category'] == section:
                 print('** ', option['item'], ' ' * (WIDTH - len(option['item']) - 17), CURRANCY, '{:>5}'.format('{:.2f}'.format(option['price'])), ' **')
     ask = 'What would you like to order?'
+    instructions = "You can view your 'order', or type the food you want to add"
     print(dedent(f'''
         {'*' * WIDTH}
         {'** ' + ' ' * ((WIDTH - len(ask)) // 2 - 3) + ask + ' ' * ((WIDTH - len(ask)) // 2 - 3 + len(ask) % 2) + ' **'}
+        {'** ' + ' ' * ((WIDTH - len(instructions)) // 2 - 3) + instructions + ' ' * ((WIDTH - len(instructions)) // 2 - 3 + len(instructions) % 2) + ' **'}
         {'*' * WIDTH}
     '''))
 
 
 def get_order(select, quantity):
-    """Takes in a value that exists in our MENU item names (this has been checked before this was called)
-    Also takes in a quantity of how many the user wants to add (often 1, but could be any integer)
-    We need to check if going to exceed the total stock we have of that item.
-    In here we will deal with output if their order is exceeding our stock
-    It then adds this item to the user's order.
+    """ Takes in a value that exists in our MENU item names (this has been
+        checked before this was called). Also takes in a quantity of how many
+        the user wants to add (often 1, but could be any integer). We need to
+        check if going to exceed the total stock we have of that item. In here
+        we will deal with output if their order is exceeding our stock. It
+        then adds this item to the user's order.
     """
+    log = ''
     for option in MENU:
         if select == option['item'].lower():
-            if option['status'] + quantity > option['stock']:
-                print("I'm sorry but we don't have enough of those left to add that to your order")
-                return
+            # Later Feature will account for how much we have in stock
+            # if option['status'] + quantity > option['stock']:
+            #     print("I'm sorry but we don't have enough of those left to add that to your order")
+            #     return
             option['status'] += quantity
-            # user_cost += option['price']
+            item_cost = option['price'] * option['status']
             # perhaps we deal with total cost later on.
-            print('** You have', option['status'], 'order(s) of', option['item'], 'for your meal **')
-            return
+            print('** You have', option['status'], 'order(s) of', option['item'], 'adding', CURRANCY, '{:.2f}'.format(item_cost), 'for your meal **')
+            log = f"{option['item']} | {option['status']} | {item_cost}"
+    return log
+
+def current_sub_total():
+    """ We want to return current sub-total afer every command
+    """
+    user_cost = 0
+    for options in MENU:
+        if options['status'] > 0:
+            user_cost += options['status'] * options['price']
+    # [user_cost += food['status'] * food['price'] for food in MENU]
+    return user_cost
 
 
 def display_order():
-    """This displays the current state of what the user is ordering and
-    the current total cost of that order.
+    """ This displays the current state of what the user is ordering and
+        the current total cost of that order.
     """
     user_cost = 0
+    uid = str(uuid.uuid4())
     # The printout formatting maybe should be moved to an external function
     line1 = 'Here is your current order.'
-    line2 = "You can 'quit', 'delete <item>', or view 'menu', 'order'"
+    line2 = "You can 'quit', 'remove <item>', or view 'menu', 'order'"
     print(dedent(f'''
         {'*' * WIDTH}
         {'** ' + ' ' * ((WIDTH - len(line1)) // 2 - 3) + line1 + ' ' * (((WIDTH - len(line1)) // 2 - 3) + len(line1)%2) + ' **'}
+        {'-' * WIDTH}
+        {'** ' + ' ' * ((WIDTH - len(uid) ) // 2 -3) + uid + ' ' * (((WIDTH - len(uid) ) // 2 - 3) + len(uid)%2) + ' **'}
         {'-' * WIDTH}
         {' Item' + ' ' * ((WIDTH - 44) // 2 + 6 ) + 'Quantity' + ' ' * ( WIDTH // 2 + (WIDTH - 44) % 2 - 3 ) + 'Price'}
     '''))
@@ -302,56 +328,64 @@ def goodbye():
     '''))
     sys.exit()
 
+# Future Features #
+# def get_menu(new_menu):
+#     """This will pull up the menu in the csv file noted in the constant declares.
+#     If for some reason this file cannot be opened, we will use the DEFAULT_MENU
+#     as our backup version for MENU.
+#     MENU_FILE order is 'item', 'category', 'price', 'stock'
+#     """
+#     menu_made = []
+#     # data_order = ['item', 'category', 'price', 'stock']
+#     try: # try-except allows us to hide the error stack from user
+#         with open(new_menu, 'r') as f:
+#             counter = 0
+#             for line in f:
+#                 food = {}
+#                 i, c, p, s = line.split(', ')
+#                 food['item'] = str(i)
+#                 food['category'] = str(c)
+#                 food['price'] = float(p)
+#                 food['stock'] = int(s)
+#                 food['status'] = 0 #Initialze the count for how many the user has selected
+#                 menu_made.append(food)
+#         # Not neccassary to 'close()' a file when using 'with'
+#     except FileNotFoundError:
+#         print('There was an error locating the file resource. We are using the default menu')
+#         menu_made = BACKUP_MENU
+#         for food in menu_made:
+#             food['stock'] = 10 # if we are using our backup menu, assume we have 10 of each item since it does not store that info
+#     return menu_made
 
-def get_menu(new_menu):
-    """This will pull up the menu in the csv file noted in the constant declares.
-    If for some reason this file cannot be opened, we will use the DEFAULT_MENU
-    as our backup version for MENU.
-    MENU_FILE order is 'item', 'category', 'price', 'stock'
-    """
-    menu_made = []
-    # data_order = ['item', 'category', 'price', 'stock']
-    try: # try-except allows us to hide the error stack from user
-        with open(new_menu, 'r') as f:
-            counter = 0
-            for line in f:
-                food = {}
-                i, c, p, s = line.split(', ')
-                food['item'] = str(i)
-                food['category'] = str(c)
-                food['price'] = float(p)
-                food['stock'] = int(s)
-                food['status'] = 0 #Initialze the count for how many the user has selected
-                menu_made.append(food)
-        # Not neccassary to 'close()' a file when using 'with'
-    except FileNotFoundError:
-        print('There was an error locating the file resource. We are using the default menu')
-        menu_made = BACKUP_MENU
-        for food in menu_made:
-            food['stock'] = 10 # if we are using our backup menu, assume we have 10 of each item since it does not store that info
-    return menu_made
 
-def delete_item(select):
+def remove_item(select):
     """This will decrease the quantity of the given menu item from the
     user's current selection. We have already made sure the input is a
     valid menu item. However, we have not yet checked if the user
     actually has any selected to purchase (be careful not to decrease
     below zero).
     """
+    lg = 'start'
     for food in MENU:
         if food['item'].lower() == select:
             if food['status'] == 0:
                 print("Oh, it seems you don't have any", select, "so I don't need to remove anything")
-                return 'not_present'
+                lg = f'bad none | remove_item | {select}'
+                return lg
             food['status'] -= 1
             print('I have removed one', select, 'from your order')
+            lg = f'remove_item | {select} | '
             if food['status'] == 0:
                 print('You have no', select, 'in your order')
-            else:
-                print('** You have', food['status'], 'order(s) of', food['item'], 'for your meal **')
+                lg += '0'
+                return lg
+            print('** You have', food['status'], 'order(s) of', food['item'], 'for your meal **')
+            lg += str(food['status'])
+            return lg
+    lg = f'bad item | remove_item | {select}'
+    return lg
 
-
-def parse_user_input(user_total):
+def parse_user_input(select):
     """ Gets an input from the user. Determines if it is a special command,
     and if so, calls the appropriate function. This is first called after
     the user initially sees the menu. It can handle the 'quit' command to
@@ -359,54 +393,70 @@ def parse_user_input(user_total):
     The user can request to see all, or some sections of the menu, to remove
     1 item in their order, to view their current order and total, or to quit
     """
-    select = ''
     quantity = 0
-    while select != 'quit':
-        bad_input = False
-        select = str(input('<: ')).lower()
-        if select == 'quit':
-            return
-        if select == 'menu' or select.capitalize() in COURSES:
-            show_menu(select.capitalize())
-        elif select == 'order':
-            display_order() #disply their current order and total
-        elif select in [elem['item'].lower() for elem in MENU]:
-            get_order(select, 1)
-        else:
-            # we need to try to split the command to see if it is delete, item pair or if it is add-item, quantity
-            if select.split()[0] == 'delete':
-                command, *item_select = select.split()
-                item_name = ' '.join(item_select)
-                if item_name in [elem['item'].lower() for elem in MENU]:
-                    delete_item(item_name)
-                else: bad_input = True
-            else:
-                lst = select.split()
-                try:
-                    quantity = int(lst[-1])
-                    item_name = ' '.join(lst[:-1])
-                    if item_name in [elem['item'].lower() for elem in MENU]:
-                        get_order(item_name, quantity)
-                    else:
-                        bad_input = True
-                except:
-                    bad_input is True
-                    quantity = 0
-        if bad_input is True:
-            print('** Sorry, I am not sure I understood what you wanted **')
+    log = ''
+    if select == 'quit' or select == '':
+        return select
+    if select == 'menu' or select.capitalize() in COURSES:
+        show_menu(select.capitalize())
+        log = f'show_menu | {select}'
+        return log
+    if select == 'order':
+        display_order()  # disply their current order and total
+        log = f'display_order'
+        return log
+    if select in [elem['item'].lower() for elem in MENU]:
+        get_order(select, 1)
+        log = f'get_order | {select} | 1'
+        return log
+    # we need to try to split the command to see if it is remove, item
+    # pair or if it is add-item, quantity
+    if select.split()[0] == 'remove':
+        command, *item_select = select.split()
+        item_name = ' '.join(item_select)
+        if item_name in [elem['item'].lower() for elem in MENU]:
+            remove_item(item_name)
+            log = f'remove_item | {item_name}'
+            return log
+        log = f'bad | remove_item | {item_name}'
+        return log
+    lst = select.split()
+    try:
+        quantity = int(lst[-1])
+    except:
+        log = f'not int | {lst[-1]}'
+        return log
+    item_name = ' '.join(lst[:-1])
+    if item_name in [elem['item'].lower() for elem in MENU]:
+        get_order(item_name, quantity)
+        log = f'get_order | {item_name} | {quantity}'
+        return log
+    log = f'bad | get_order | {item_name} | {quantity}'
+    return log
 
-return user_total 
 
 def run():
     """This is the main function, which calls the other functions to do the main work
     """
-    global MENU
-    MENU = get_menu(MENU_FILE)
+    # mostly used for future features
+    # global MENU
+    # MENU = BACKUP_MENU
+    # Future Feature function
+    # MENU = get_menu(MENU_FILE)
     greeting()
     show_menu('menu')
-    parse_user_input(USER_TOTAL) #This does most of our programs work
+    select = ''
+    while select != 'quit':
+        select = str(input('<: ')).lower()
+        select = parse_user_input(select)  # This does most of our programs work
+        if select.split(' ')[0] == 'bad':
+            print('** Sorry, I am not sure I understood what you wanted **')
+        print(select)
+        print('Current Sub-Total: ', CURRANCY, '{:.2f}'.format(current_sub_total()))
     goodbye()
 
 
 if __name__ == '__main__':
+    """ If this file was called directly, go to the run() function.
+    """
     run()
