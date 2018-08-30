@@ -27,14 +27,14 @@ Code 02:
 - [x] If the user types order, their entire order is printed to the console. For example:
         Each item, (perhaps quantity), price for that food item
         Subtotal, Sales Tax, Total all listed. Currency sign for all listing of money
-- [ ] Every order should get a universally unique identifier. Consider using the uuid package
+- [x] Every order should get a universally unique identifier. Consider using the uuid package
 - [x] In the order printout you must include sales tax (9.6% in Seattle as of 2018) in the final total (round up to 2 decimal places)
 - [x] In the order printout, all of the costs should be right-justified, and all of the item names should be left-justified
 - [x] If the user types menu, the entire menu is printed to the console
 - [x] If the user types the name of any of your categories, the items in that category should be printed to the console
-- [ ] If the user types remove <ITEM NAME>, 1 item of the type <ITEM NAME> should be removed from their order, and their order’s total should be printed to the screen
+- [x] If the user types remove <ITEM NAME>, 1 item of the type <ITEM NAME> should be removed from their order, and their order’s total should be printed to the screen
 - [x] All input should be case-insensitive
-- [ ] Keep your functions small, concise, and testable.
+- [x] Keep your functions small, concise, and testable.
 - [ ] Testing: Every function that you write should be tested and documented. The only functions that are exempt are the ones that take print strings to stdout (they don’t return anything). Also, the if __name__ == '__main__' block does not need to be tested
 - [x] Create a checklist to list the specifications
 
