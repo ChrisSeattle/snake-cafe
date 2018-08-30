@@ -93,8 +93,8 @@ MENU = [
     {
         'item': 'Cake',
         'category': 'Desserts',
-         'price': 8.00,
-       'status': 0,
+        'price': 8.00,
+        'status': 0,
     },
     {
         'item': 'Pie',
@@ -224,7 +224,7 @@ def show_menu(selection):
     if selection.lower() == 'menu':  # default setting used for early stages of this app
         display = COURSES
     for section in display:
-        print('\n** ' , section, '\n** ', '-' * 8)
+        print('\n** ', section, '\n** ', '-' * 8)
         for option in MENU:
             if option['category'] == section:
                 print('** ', option['item'], ' ' * (WIDTH - len(option['item']) - 17), CURRANCY, '{:>5}'.format('{:.2f}'.format(option['price'])), ' **')
@@ -246,7 +246,7 @@ def get_order(select, quantity):
         we will deal with output if their order is exceeding our stock. It
         then adds this item to the user's order.
     """
-    temp_total = 0
+    log = ''
     for option in MENU:
         if select == option['item'].lower():
             # Later Feature will account for how much we have in stock
@@ -254,16 +254,16 @@ def get_order(select, quantity):
             #     print("I'm sorry but we don't have enough of those left to add that to your order")
             #     return
             option['status'] += quantity
-            temp_total += option['price'] * option['status']
+            item_cost = option['price'] * option['status']
             # perhaps we deal with total cost later on.
-            print('** You have', option['status'], 'order(s) of', option['item'], 'for your meal **')
-
-    return
+            print('** You have', option['status'], 'order(s) of', option['item'], 'adding', CURRANCY, item_cost, 'for your meal **')
+            log = f"{option['item']} | {option['status']} | {item_cost}"
+    return log
 
 
 def display_order():
-    """This displays the current state of what the user is ordering and
-    the current total cost of that order.
+    """ This displays the current state of what the user is ordering and
+        the current total cost of that order.
     """
     user_cost = 0
     uid = str(uuid.uuid4())
@@ -355,18 +355,25 @@ def remove_item(select):
     actually has any selected to purchase (be careful not to decrease
     below zero).
     """
+    lg = 'start'
     for food in MENU:
         if food['item'].lower() == select:
             if food['status'] == 0:
                 print("Oh, it seems you don't have any", select, "so I don't need to remove anything")
-                return 'not_present'
+                lg = f'bad none | remove_item | {select}'
+                return lg
             food['status'] -= 1
             print('I have removed one', select, 'from your order')
+            lg = f'remove_item | {select} | '
             if food['status'] == 0:
                 print('You have no', select, 'in your order')
-            else:
-                print('** You have', food['status'], 'order(s) of', food['item'], 'for your meal **')
-
+                lg += '0'
+                return lg
+            print('** You have', food['status'], 'order(s) of', food['item'], 'for your meal **')
+            lg += str(food['status'])
+            return lg
+    lg = f'bad item | remove_item | {select}'
+    return lg
 
 def parse_user_input(select):
     """ Gets an input from the user. Determines if it is a special command,
@@ -378,7 +385,7 @@ def parse_user_input(select):
     """
     quantity = 0
     log = ''
-    if select == 'quit':
+    if select == 'quit' or select == '':
         return select
     if select == 'menu' or select.capitalize() in COURSES:
         show_menu(select.capitalize())
@@ -434,6 +441,7 @@ def run():
         select = parse_user_input(select)  # This does most of our programs work
         if select.split(' ')[0] == 'bad':
             print('** Sorry, I am not sure I understood what you wanted **')
+        print(sel)
     goodbye()
 
 

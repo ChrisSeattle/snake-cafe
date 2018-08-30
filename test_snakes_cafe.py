@@ -1,11 +1,4 @@
-from .snakes_cafe import parse_user_input, get_order, show_menu
-
-
-# greeting() only has a print output. No additional testing.
-# show_menu() only does a print of output. No additonal testing.
-# display_order() only has print output. No additional testing.
-# goodybye only() has print output. No additonal testing.
-# get_menu() is for future features.
+from .snakes_cafe import parse_user_input, get_order, remove_item
 
 
 def test_alive():
@@ -20,17 +13,31 @@ def test_alive():
 #     """
 #     assert get_menu
 
-def test_show_menu_exists():
-    """ Can we see the show_menu function
-        menu order remove
+
+def test_get_order_exists():
+    """ Do we see the get_order functioin
     """
-    assert show_menu
+    assert get_order
 
 
-def test_show_menu_default():
-    """ Testing what is he first, and common way to call this command
+def test_get_order_one_item():
+    """ Does get_order return expected log on given item ordered
     """
-    assert show_menu('menu')
+    item = 'pizza'
+    quantitity = 1
+    expected = 'Pizza | 1 | 41.0'
+    actual = get_order(item, quantitity)
+    assert actual == expected
+
+
+def test_get_order_item_few():
+    """ Does get_order work when user adds multiple of an item
+    """
+    item = 'flan'
+    quantitity = 3
+    expected = 'Flan | 3 | 21.0'
+    actual = get_order(item, quantitity)
+    assert actual == expected
 
 
 def test_parse_user_input_exists():
@@ -40,7 +47,7 @@ def test_parse_user_input_exists():
 
 
 def test_parse_user_input_quit():
-    """ On quit it should just return the string back to us
+    """ On 'quit' it should just return the string back to us
     """
     input = 'quit'
     output = parse_user_input(input)
@@ -48,7 +55,7 @@ def test_parse_user_input_quit():
 
 
 def test_parse_user_input_menu():
-    """ On quit it should just return the string back to us
+    """ On 'menu' it should call show_menu and returns a log
     """
     input = 'menu'
     output = parse_user_input(input)
@@ -57,7 +64,7 @@ def test_parse_user_input_menu():
 
 
 def test_parse_user_input_order():
-    """ On quit it should just return the string back to us
+    """ On 'order', it calls display_order and returns a log
     """
     input = 'order'
     output = parse_user_input(input)
@@ -65,20 +72,52 @@ def test_parse_user_input_order():
     assert output == expected
 
 
-def test_parse_user_input_remove():
-    """ On quit it should just return the string back to us
+def test_remove_item_exits():
+    """ Can we see the function
     """
-    input = 'remove'
-    output = parse_user_input(input)
-    result = output.split(' ')
-    expected = 'remove_item'
-    assert result[0] == expected
+    assert remove_item
 
 
-def test_get_order_exists():
-    """ get_order function is needed for adding items to user's order
+def test_remove_item_when_item_not_in_current_order():
+    """ If we don't add an item in advance, test our response on remove attempt
     """
-    assert get_order
+    input = 'Blood of the Innocent'.lower()
+    expected = f'bad none | remove_item | {input}'
+    actual = remove_item(input)
+    assert actual == expected
+
+
+def test_remove_the_recently_added_single_item():
+    """ Add a single item from MENU, then do we remove it
+    """
+    input = 'fries'.lower()
+    quantitity = 1
+    get_order(input, quantitity)
+    expected = f'remove_item | {input} | ' + '0'
+    actual = remove_item(input)
+    assert actual == expected
+
+
+def test_remove_the_recently_added_multiple_item():
+    """ Add a single item from MENU, then do we remove it
+    """
+    input = 'wings'.lower()
+    quantitity = 5
+    get_order(input, quantitity)
+    expected = f'remove_item | {input} | ' + str(quantitity - 1)
+    actual = remove_item(input)
+    assert actual == expected
+
+
+def test_remove_item_that_is_not_in_menu():
+    """ Does test_remove manage when asked to remove an item
+        that isn't even a valid item for our MENU
+    """
+    input = 'asdfghkl'.lower()
+    expected = f'bad item | remove_item | {input}'
+    actual = remove_item(input)
+    assert actual == expected
+
 
 
 # def test_get_order_increases_count_of_item_ordered():
