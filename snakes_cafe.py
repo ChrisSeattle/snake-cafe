@@ -276,6 +276,11 @@ def get_order(select, quantity):
         we will deal with output if their order is exceeding our stock. It
         then adds this item to the user's order.
     """
+    # try:
+    #     MENU
+    # except NameError:
+    #     MENU = get_menu('menu_file')
+
     log = ''
     for option in MENU:
         if select == option['item'].lower():
@@ -293,7 +298,7 @@ def get_order(select, quantity):
 
 
 def current_sub_total():
-    """ We want to return current sub-total afer every command
+    """ We want to return cur   rent sub-total afer every command
     """
     user_cost = 0
     for options in MENU:
@@ -369,6 +374,10 @@ def remove_item(select):
     actually has any selected to purchase (be careful not to decrease
     below zero).
     """
+    # try:
+    #     MENU
+    # except NameError:
+    #     MENU = get_menu('menu_file')
     lg = 'start'
     for food in MENU:
         if food['item'].lower() == select:
@@ -398,6 +407,10 @@ def parse_user_input(select):
     The user can request to see all, or some sections of the menu, to remove
     1 item in their order, to view their current order and total, or to quit
     """
+    # try:
+    #     MENU
+    # except NameError:
+    #     MENU = get_menu('menu_file')
     quantity = 0
     log = ''
     if select == 'quit' or select == '':

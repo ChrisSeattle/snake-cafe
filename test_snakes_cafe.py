@@ -25,15 +25,13 @@ def test_get_menu_file_not_found():
 def test_get_menu_file_found():
     """ What if the user asked to use an unfound file
     """
-    global MENU
     input = 'menu_file'
-    MENU = get_menu(input)
     output = get_menu(input)
     assert isinstance(output, list)
 
 
 def test_get_order_exists():
-    """ Do we see the get_order functioin
+    """ Do we see the get_order function
     """
     assert get_order
 
@@ -41,8 +39,8 @@ def test_get_order_exists():
 def test_get_order_one_item():
     """ Does get_order return expected log on given item ordered
     """
-    global MENU
-    MENU = get_menu(menu_file)
+    # global MENU
+    # MENU = get_menu('menu_file')
     item = 'pizza'
     quantitity = 1
     expected = 'Pizza | 1 | 41.0'
