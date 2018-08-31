@@ -7,7 +7,6 @@ import sys
 CURRANCY = '$'
 SALES_TAX = 0.096
 WIDTH = 78
-SUB_TOTAL = 0
 MENU_FILE = 'menu_file.csv'
 # for future features.
 # Change old default MENU to BACKUP_MENU, and have MENU variable assignable
@@ -276,11 +275,6 @@ def get_order(select, quantity, MENU):
         we will deal with output if their order is exceeding our stock. It
         then adds this item to the user's order.
     """
-    # try:
-    #     MENU
-    # except NameError:
-    #     MENU = get_menu('menu_file')
-
     log = ''
     for option in MENU:
         if select == option['item'].lower():
@@ -373,10 +367,6 @@ def remove_item(select, MENU):
     actually has any selected to purchase (be careful not to decrease
     below zero).
     """
-    # try:
-    #     MENU
-    # except NameError:
-    #     MENU = get_menu('menu_file')
     lg = 'start'
     for food in MENU:
         if food['item'].lower() == select:
@@ -406,10 +396,6 @@ def parse_user_input(select, MENU):
     The user can request to see all, or some sections of the menu, to remove
     1 item in their order, to view their current order and total, or to quit
     """
-    # try:
-    #     MENU
-    # except NameError:
-    #     MENU = get_menu('menu_file')
     quantity = 0
     log = ''
     if select == 'quit' or select == '':
@@ -419,7 +405,7 @@ def parse_user_input(select, MENU):
         log = f'show_menu | {select}'
         return log
     if select == 'order':
-        display_order()  # disply their current order and total
+        display_order(MENU)  # disply their current order and total
         log = f'display_order'
         return log
     if select in [elem['item'].lower() for elem in MENU]:
@@ -432,7 +418,7 @@ def parse_user_input(select, MENU):
         command, *item_select = select.split()
         item_name = ' '.join(item_select)
         if item_name in [elem['item'].lower() for elem in MENU]:
-            remove_item(item_name)
+            remove_item(item_name, MENU)
             log = f'remove_item | {item_name}'
             return log
         log = f'bad | remove_item | {item_name}'
@@ -448,7 +434,7 @@ def parse_user_input(select, MENU):
         return log
     item_name = ' '.join(lst[:-1])
     if item_name in [elem['item'].lower() for elem in MENU]:
-        get_order(item_name, quantity)
+        get_order(item_name, quantity, MENU)
         log = f'get_order | {item_name} | {quantity}'
         return log
     log = f'bad | get_order | {item_name} | {quantity}'
@@ -509,7 +495,7 @@ def run():
     global MENU
     MENU = select_menu()
     greeting()
-    show_menu('menu')
+    show_menu('menu', MENU)
     select = ''
     while select != 'quit':
         select = str(input('<: ')).lower()
@@ -517,7 +503,7 @@ def run():
         if select.split(' ')[0] == 'bad':
             print('** Sorry, I am not sure I understood what you wanted **')
         print(select)
-        print('Current Sub-Total: ', CURRANCY, '{:.2f}'.format(current_sub_total()))
+        print('Current Sub-Total: ', CURRANCY, '{:.2f}'.format(current_sub_total(MENU)))
     goodbye()
 
 

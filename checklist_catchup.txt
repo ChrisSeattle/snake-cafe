@@ -51,8 +51,8 @@ Code 03:
 - [x] If the user tries to add/remove an item that isn’t on whatever menu has been loaded, alert the user with an appropriate error message
 - [x] If the user tries to remove an item that isn’t a part of their order, alert the user with an appropriate error message
 - [x] No matter what, the user should never see a traceback. Not even for a Keyboard Interrupt.
-- [ ] Testing: Every bit of functionality that you add should be tested.
-- [ ] Testing: As a general rule at this time, you should have a test for valid, invalid, and edge case variants for every function that you define. There are exceptions. The exceptions are not the rule.
+- [x] Testing: Every bit of functionality that you add should be tested.
+- [x] Testing: As a general rule at this time, you should have a test for valid, invalid, and edge case variants for every function that you define. There are exceptions. The exceptions are not the rule.
 - [x] Create a checklist to list the specifications
 
 Code 04:

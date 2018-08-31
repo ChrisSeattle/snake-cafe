@@ -18,8 +18,7 @@ The following functions will not have testing at this time, along with reasons.
 
 get_menu() called by select_menu, taking in a filename.
     does it exist
-    test if filename not found
-    if file found, does it return a properly formatted menu dataset. 
+    if file found, does it return a properly formatted menu dataset.
 
 parse_user_input() refactored to return a log.
     Does it exist
