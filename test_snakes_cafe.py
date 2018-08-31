@@ -1,4 +1,4 @@
-from .snakes_cafe import parse_user_input, get_order, remove_item
+from .snakes_cafe import parse_user_input, get_order, remove_item, get_menu
 
 
 def test_alive():
@@ -7,11 +7,29 @@ def test_alive():
     pass
 
 
-# get_menu is for future features
-# def test_get_menu_exists():
-#     """get_menu allows us to import a cvs file that holds the data of our menu.
-#     """
-#     assert get_menu
+def test_get_menu_exists():
+    """ Can we see the function
+    """
+    assert get_menu
+
+
+def test_get_menu_file_not_found():
+    """ What if the user asked to use an unfound file
+    """
+    input = 'we_do_not_have_this_file_really'
+    output = get_menu(input)
+    expected = ''
+    assert output == expected
+
+
+def test_get_menu_file_found():
+    """ What if the user asked to use an unfound file
+    """
+    global MENU
+    input = 'menu_file'
+    MENU = get_menu(input)
+    output = get_menu(input)
+    assert isinstance(output, list)
 
 
 def test_get_order_exists():
@@ -23,6 +41,8 @@ def test_get_order_exists():
 def test_get_order_one_item():
     """ Does get_order return expected log on given item ordered
     """
+    global MENU
+    MENU = get_menu(menu_file)
     item = 'pizza'
     quantitity = 1
     expected = 'Pizza | 1 | 41.0'
@@ -33,6 +53,7 @@ def test_get_order_one_item():
 def test_get_order_item_few():
     """ Does get_order work when user adds multiple of an item
     """
+    MENU = get_menu(menu_file)
     item = 'flan'
     quantitity = 3
     expected = 'Flan | 3 | 21.0'
@@ -117,7 +138,6 @@ def test_remove_item_that_is_not_in_menu():
     expected = f'bad item | remove_item | {input}'
     actual = remove_item(input)
     assert actual == expected
-
 
 
 # def test_get_order_increases_count_of_item_ordered():

@@ -12,9 +12,14 @@ The following functions will not have testing at this time, along with reasons.
 
 - goodybye() only has print output. No additonal testing.
 
-- get_menu() is for future features.
+- select_menu() Takes no inputs. prompts the user with option to use default, new, or typed in filename.
 
 ## Tested Functions ##
+
+get_menu() called by select_menu, taking in a filename.
+    does it exist
+    test if filename not found
+    if file found, does it return a properly formatted menu dataset. 
 
 parse_user_input() refactored to return a log.
     Does it exist

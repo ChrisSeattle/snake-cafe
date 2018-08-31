@@ -11,186 +11,216 @@ SUB_TOTAL = 0
 MENU_FILE = 'menu_file.csv'
 # for future features.
 # Change old default MENU to BACKUP_MENU, and have MENU variable assignable
-MENU = [
+DEFAULT_MENU = [
     {
         'item': 'Wings',
         'category': 'Appetizers',
         'price': 10.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Cookies',
         'category': 'Appetizers',
         'price': 5.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Spring Rolls',
         'category': 'Appetizers',
         'price': 9.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Sliders',
         'category': 'Appetizers',
         'price': 10.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Nachos',
         'category': 'Appetizers',
         'price': 8.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Rib Tips',
         'category': 'Appetizers',
         'price': 12.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Salmon',
         'category': 'Entrees',
         'price': 21.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Steak',
         'category': 'Entrees',
         'price': 31.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Meat Tornado',
         'category': 'Entrees',
         'price': 28.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'A Literal Garden',
         'category': 'Entrees',
          'price': 19.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Chicken Alfredo',
         'category': 'Entrees',
         'price': 14.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Pizza',
         'category': 'Entrees',
         'price': 41.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Ice Cream',
         'category': 'Desserts',
         'price': 7.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Cake',
         'category': 'Desserts',
         'price': 8.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Pie',
         'category': 'Desserts',
         'price': 6.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'ChocoTower',
         'category': 'Desserts',
         'price': 12.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Pudding',
         'category': 'Desserts',
         'price': 4.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Flan',
         'category': 'Desserts',
         'price': 7.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Coffee',
         'category': 'Drinks',
         'price': 14.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Tea',
         'category': 'Drinks',
         'price': 3.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Blood of the Innocent',
         'category': 'Drinks',
         'price': 6.66,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Soda',
         'category': 'Drinks',
         'price': 2.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Memosa',
         'category': 'Drinks',
         'price': 8.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Cocktail',
         'category': 'Drinks',
         'price': 0.50,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Fries',
         'category': 'Sides',
         'price': 4.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Onion Rings',
         'category': 'Sides',
         'price': 6.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Vegi',
         'category': 'Sides',
         'price': 3.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Potato',
         'category': 'Sides',
         'price': 4.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Bread',
         'category': 'Sides',
         'price': 2.00,
         'status': 0,
+        'stock': 10,
     },
     {
         'item': 'Cheese',
         'category': 'Sides',
         'price': 8.00,
         'status': 0,
+        'stock': 10,
     },
 ]
 COURSES = ['Appetizers', 'Entrees', 'Desserts', 'Drinks', 'Sides',]
@@ -249,16 +279,18 @@ def get_order(select, quantity):
     log = ''
     for option in MENU:
         if select == option['item'].lower():
-            # Later Feature will account for how much we have in stock
-            # if option['status'] + quantity > option['stock']:
-            #     print("I'm sorry but we don't have enough of those left to add that to your order")
-            #     return
+            # Aaccount for how much we have in stock
+            if option['status'] + quantity > option['stock']:
+                print("I'm sorry but we don't have enough of those left to add that to your order")
+                log = f'get_order | stock | {select}'
+                return log
             option['status'] += quantity
             item_cost = option['price'] * option['status']
             # perhaps we deal with total cost later on.
             print('** You have', option['status'], 'order(s) of', option['item'], 'adding', CURRANCY, '{:.2f}'.format(item_cost), 'for your meal **')
             log = f"{option['item']} | {option['status']} | {item_cost}"
     return log
+
 
 def current_sub_total():
     """ We want to return current sub-total afer every command
@@ -328,34 +360,6 @@ def goodbye():
     '''))
     sys.exit()
 
-# Future Features #
-# def get_menu(new_menu):
-#     """This will pull up the menu in the csv file noted in the constant declares.
-#     If for some reason this file cannot be opened, we will use the DEFAULT_MENU
-#     as our backup version for MENU.
-#     MENU_FILE order is 'item', 'category', 'price', 'stock'
-#     """
-#     menu_made = []
-#     # data_order = ['item', 'category', 'price', 'stock']
-#     try: # try-except allows us to hide the error stack from user
-#         with open(new_menu, 'r') as f:
-#             counter = 0
-#             for line in f:
-#                 food = {}
-#                 i, c, p, s = line.split(', ')
-#                 food['item'] = str(i)
-#                 food['category'] = str(c)
-#                 food['price'] = float(p)
-#                 food['stock'] = int(s)
-#                 food['status'] = 0 #Initialze the count for how many the user has selected
-#                 menu_made.append(food)
-#         # Not neccassary to 'close()' a file when using 'with'
-#     except FileNotFoundError:
-#         print('There was an error locating the file resource. We are using the default menu')
-#         menu_made = BACKUP_MENU
-#         for food in menu_made:
-#             food['stock'] = 10 # if we are using our backup menu, assume we have 10 of each item since it does not store that info
-#     return menu_made
 
 
 def remove_item(select):
@@ -384,6 +388,7 @@ def remove_item(select):
             return lg
     lg = f'bad item | remove_item | {select}'
     return lg
+
 
 def parse_user_input(select):
     """ Gets an input from the user. Determines if it is a special command,
@@ -424,7 +429,10 @@ def parse_user_input(select):
     try:
         quantity = int(lst[-1])
     except:
-        log = f'not int | {lst[-1]}'
+        log = f'bad not_int | {lst[-1]}'
+        return log
+    if quantity < 1:
+        log = f'bad not_positive_int | {lst[-1]}'
         return log
     item_name = ' '.join(lst[:-1])
     if item_name in [elem['item'].lower() for elem in MENU]:
@@ -435,14 +443,60 @@ def parse_user_input(select):
     return log
 
 
+# Future Features #
+def get_menu(new_menu):
+    """This will pull up the menu in the csv file noted in the constant declares.
+    If for some reason this file cannot be opened, we will ask the user again.
+    MENU_FILE order is 'item', 'category', 'price', 'stock'
+    """
+    menu_made = []
+    new_menu += '.csv'
+    # data_order = ['item', 'category', 'price', 'stock']
+    try:  # try-except allows us to hide the error stack from user
+        with open(new_menu, 'r') as f:
+            for line in f:
+                food = {}
+                i, c, p, s = line.split(', ')
+                food['item'] = str(i)
+                food['category'] = str(c)
+                food['price'] = float(p)
+                food['stock'] = int(s)
+                food['status'] = 0  # Initialze the count for how many the user has selected
+                menu_made.append(food)
+        # Not neccassary to 'close()' a file when using 'with'
+    except FileNotFoundError:
+        print('There was an error locating the file resource. Try again.')
+        return select_menu()
+    return menu_made
+
+
+def select_menu():
+    """ The user can choose a different menu option
+    """
+    print(dedent(f'''
+    {'Would you like to use our default menu, or use a custom menu?'}
+    {'Input 1 for Backup Menu, 2 for New Menu, or type the path to the file.'}
+    '''))
+
+    menu_input = input('<: ')
+    if menu_input == '1':
+        return DEFAULT_MENU
+    if menu_input == '2':
+        menu_input = MENU_FILE
+    file_structure = menu_input.split('/')
+    file = file_structure[len(file_structure)-1].split('.')
+    extension = file[len(file)-1]
+    if extension != 'csv':
+        print('Oops, we can only accept a CSV file.')
+        return select_menu()
+    return get_menu(file[0])
+
+
 def run():
     """This is the main function, which calls the other functions to do the main work
     """
-    # mostly used for future features
-    # global MENU
-    # MENU = BACKUP_MENU
-    # Future Feature function
-    # MENU = get_menu(MENU_FILE)
+    global MENU
+    MENU = select_menu()
     greeting()
     show_menu('menu')
     select = ''
@@ -459,4 +513,7 @@ def run():
 if __name__ == '__main__':
     """ If this file was called directly, go to the run() function.
     """
-    run()
+    try:
+        run()
+    except(KeyboardInterrupt):
+        goodbye()
