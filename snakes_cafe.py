@@ -244,7 +244,7 @@ def greeting():
     '''))
 
 
-def show_menu(selection):
+def show_menu(selection, MENU):
     """Function can display all item on the menu, or all items
         in a specific category of the menu if requested by user input.
         The parameter it takes is for later features. Currently this
@@ -268,7 +268,7 @@ def show_menu(selection):
     '''))
 
 
-def get_order(select, quantity):
+def get_order(select, quantity, MENU):
     """ Takes in a value that exists in our MENU item names (this has been
         checked before this was called). Also takes in a quantity of how many
         the user wants to add (often 1, but could be any integer). We need to
@@ -297,7 +297,7 @@ def get_order(select, quantity):
     return log
 
 
-def current_sub_total():
+def current_sub_total(MENU):
     """ We want to return cur   rent sub-total afer every command
     """
     user_cost = 0
@@ -308,7 +308,7 @@ def current_sub_total():
     return user_cost
 
 
-def display_order():
+def display_order(MENU):
     """ This displays the current state of what the user is ordering and
         the current total cost of that order.
     """
@@ -366,8 +366,7 @@ def goodbye():
     sys.exit()
 
 
-
-def remove_item(select):
+def remove_item(select, MENU):
     """This will decrease the quantity of the given menu item from the
     user's current selection. We have already made sure the input is a
     valid menu item. However, we have not yet checked if the user
@@ -399,7 +398,7 @@ def remove_item(select):
     return lg
 
 
-def parse_user_input(select):
+def parse_user_input(select, MENU):
     """ Gets an input from the user. Determines if it is a special command,
     and if so, calls the appropriate function. This is first called after
     the user initially sees the menu. It can handle the 'quit' command to
@@ -416,7 +415,7 @@ def parse_user_input(select):
     if select == 'quit' or select == '':
         return select
     if select == 'menu' or select.capitalize() in COURSES:
-        show_menu(select.capitalize())
+        show_menu(select.capitalize(), MENU)
         log = f'show_menu | {select}'
         return log
     if select == 'order':
@@ -424,7 +423,7 @@ def parse_user_input(select):
         log = f'display_order'
         return log
     if select in [elem['item'].lower() for elem in MENU]:
-        get_order(select, 1)
+        get_order(select, 1, MENU)
         log = f'get_order | {select} | 1'
         return log
     # we need to try to split the command to see if it is remove, item
@@ -456,7 +455,6 @@ def parse_user_input(select):
     return log
 
 
-# Future Features #
 def get_menu(new_menu):
     """This will pull up the menu in the csv file noted in the constant declares.
     If for some reason this file cannot be opened, we will ask the user again.
@@ -515,7 +513,7 @@ def run():
     select = ''
     while select != 'quit':
         select = str(input('<: ')).lower()
-        select = parse_user_input(select)  # This does most of our programs work
+        select = parse_user_input(select, MENU)  # This does most of our programs work
         if select.split(' ')[0] == 'bad':
             print('** Sorry, I am not sure I understood what you wanted **')
         print(select)
