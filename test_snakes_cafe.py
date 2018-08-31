@@ -1,4 +1,4 @@
-from .snakes_cafe import parse_user_input, get_order, remove_item
+from .snakes_cafe import parse_user_input, get_order, remove_item, get_menu
 
 
 def test_alive():
@@ -7,15 +7,22 @@ def test_alive():
     pass
 
 
-# get_menu is for future features
-# def test_get_menu_exists():
-#     """get_menu allows us to import a cvs file that holds the data of our menu.
-#     """
-#     assert get_menu
+def test_get_menu_exists():
+    """ Can we see the function
+    """
+    assert get_menu
+
+
+def test_get_menu_file_found():
+    """ What if the user asked to use an unfound file
+    """
+    input = 'menu_file'
+    output = get_menu(input)
+    assert isinstance(output, list)
 
 
 def test_get_order_exists():
-    """ Do we see the get_order functioin
+    """ Do we see the get_order function
     """
     assert get_order
 
@@ -23,20 +30,24 @@ def test_get_order_exists():
 def test_get_order_one_item():
     """ Does get_order return expected log on given item ordered
     """
+    # global MENU
+    # MENU = get_menu('menu_file')
+    MENU = get_menu('menu_file')
     item = 'pizza'
     quantitity = 1
     expected = 'Pizza | 1 | 41.0'
-    actual = get_order(item, quantitity)
+    actual = get_order(item, quantitity, MENU)
     assert actual == expected
 
 
 def test_get_order_item_few():
     """ Does get_order work when user adds multiple of an item
     """
+    MENU = get_menu('menu_file')
     item = 'flan'
     quantitity = 3
     expected = 'Flan | 3 | 21.0'
-    actual = get_order(item, quantitity)
+    actual = get_order(item, quantitity, MENU)
     assert actual == expected
 
 
@@ -49,16 +60,18 @@ def test_parse_user_input_exists():
 def test_parse_user_input_quit():
     """ On 'quit' it should just return the string back to us
     """
+    MENU = get_menu('menu_file')
     input = 'quit'
-    output = parse_user_input(input)
+    output = parse_user_input(input, MENU)
     assert input == output
 
 
 def test_parse_user_input_menu():
     """ On 'menu' it should call show_menu and returns a log
     """
+    MENU = get_menu('menu_file')
     input = 'menu'
-    output = parse_user_input(input)
+    output = parse_user_input(input, MENU)
     expected = 'show_menu | menu'
     assert output == expected
 
@@ -66,8 +79,9 @@ def test_parse_user_input_menu():
 def test_parse_user_input_order():
     """ On 'order', it calls display_order and returns a log
     """
+    MENU = get_menu('menu_file')
     input = 'order'
-    output = parse_user_input(input)
+    output = parse_user_input(input, MENU)
     expected = 'display_order'
     assert output == expected
 
@@ -81,31 +95,34 @@ def test_remove_item_exits():
 def test_remove_item_when_item_not_in_current_order():
     """ If we don't add an item in advance, test our response on remove attempt
     """
+    MENU = get_menu('menu_file')
     input = 'Blood of the Innocent'.lower()
     expected = f'bad none | remove_item | {input}'
-    actual = remove_item(input)
+    actual = remove_item(input, MENU)
     assert actual == expected
 
 
 def test_remove_the_recently_added_single_item():
     """ Add a single item from MENU, then do we remove it
     """
+    MENU = get_menu('menu_file')
     input = 'fries'.lower()
     quantitity = 1
-    get_order(input, quantitity)
+    get_order(input, quantitity, MENU)
     expected = f'remove_item | {input} | ' + '0'
-    actual = remove_item(input)
+    actual = remove_item(input, MENU)
     assert actual == expected
 
 
 def test_remove_the_recently_added_multiple_item():
     """ Add a single item from MENU, then do we remove it
     """
+    MENU = get_menu('menu_file')
     input = 'wings'.lower()
     quantitity = 5
-    get_order(input, quantitity)
+    get_order(input, quantitity, MENU)
     expected = f'remove_item | {input} | ' + str(quantitity - 1)
-    actual = remove_item(input)
+    actual = remove_item(input, MENU)
     assert actual == expected
 
 
@@ -113,11 +130,11 @@ def test_remove_item_that_is_not_in_menu():
     """ Does test_remove manage when asked to remove an item
         that isn't even a valid item for our MENU
     """
+    MENU = get_menu('menu_file')
     input = 'asdfghkl'.lower()
     expected = f'bad item | remove_item | {input}'
-    actual = remove_item(input)
+    actual = remove_item(input, MENU)
     assert actual == expected
-
 
 
 # def test_get_order_increases_count_of_item_ordered():
