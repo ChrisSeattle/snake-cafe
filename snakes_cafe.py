@@ -227,6 +227,159 @@ COURSES = ['Appetizers', 'Entrees', 'Desserts', 'Drinks', 'Sides',]
 # perhaps we don't want USER_COMMANDS, reconsider when looking at future features
 
 
+class Order(object):
+    """ A user's orders will stored using this class.
+    """
+    def __init__(self, ):
+        """
+        """
+        self.total_items = 0
+        self.user_cost = 0
+        self.uid = str(uuid.uuid4())
+        self.orders = dict()
+        # item/name: count of ordered
+        # for each item user has ordered from MENU list
+        # MENU list has dict of item/name, category, price, status/unused, # avaliable,
+
+    def __len__(self):
+        return self.total_items
+
+    def __str__(self):
+        return self.display_order()
+
+    def __repr__(self):
+        return f'''<Order {self.uid} | Items: {self.total_items} | Total: {CURRANCY} {self.user_cost}>'''
+
+    def current_sub_total(self, MENU):
+        """ We want to return current sub-total afer every command
+        """
+        user_cost = 0
+        for options in MENU:
+            if options['status'] > 0:
+                user_cost += options['status'] * options['price']
+        # [user_cost += food['status'] * food['price'] for food in MENU]
+        return user_cost
+
+    def add_item(self, select, MENU, quantity=1):
+        """ Takes in a value that exists in our MENU item names (this has been
+            checked before this was called). Also takes in a quantity of how many
+            the user wants to add (often 1, but could be any integer). We need to
+            check if going to exceed the total stock we have of that item. In here
+            we will deal with output if their order is exceeding our stock. It
+            then adds this item to the user's order.
+        """
+        # old version option['status'] to store how many user wants in the store's MENU item object
+        # new: self.orders[item/name] = count of how many user has
+        # therefore: self.orders[select] += quantity if it exists, or insert and = quantity if not
+        #                   at same time, self.total_items += quantity
+
+        log = 'no items'  # over-written later
+        for option in MENU:
+            if select == option['item'].lower():
+                # user is ordering this item, so make sure it's in orders
+                if select not in self.orders.keys():
+                    self.orders[select] = 0  # count 0 for now
+                # Account for how much the cafe has in stock
+                if self.orders[select] + quantity > option['stock']:
+                    print("I'm sorry but we don't have enough of those left to add that to your order")
+                    log = f'bad stock | user.add_item | {select} | {quantity}'
+                    return log
+                self.orders[select] += quantity
+                self.total_items += quantity
+                # item_cost = option['price'] * self.orders[select]
+                add_cost = option['price'] * quantity
+                self.user_cost += add_cost
+                print('** You added', quantity, 'order(s) of', option['item'], 'adding', CURRANCY, '{:.2f}'.format(add_cost), 'for your meal **')
+                log = f'user.add_items | {select} | {quantity}'
+        return log
+
+    def remove_item(self, select, MENU, quantity=1):
+        """This will decrease the quantity of the given menu item from the
+            user's current selection. We have already made sure the input is a
+            valid menu item. However, we have not yet checked if the user
+            actually has any selected to purchase (be careful not to decrease
+            below zero).
+            """
+        lg = 'start'  # over-written later
+        # old food['status'] for when we stored it in the cafe MENU
+        # new: self.orders[select] to track in this user's Order
+        for food in MENU:
+            if food['item'].lower() == select:
+                # make sure user actually has some in orders
+                if select not in self.orders.keys() or self.orders[select] == 0:
+                    print("Oh, it seems you don't have any", select, "so I don't need to remove anything")
+                    lg = f'user.remove_item | had none | {select}'
+                    return lg
+                if quantity > self.orders[select]:
+                    print("You don't actually have that many of", select)
+                    print("Since you only have", self.orders[select], "I'll remove all of them")
+                    quantity = self.orders[select]
+                self.orders[select] -= quantity
+                self.total_items -= quantity
+                print('I have removed', quantity, 'of', select, 'from your order')
+                self.user_cost -= quantity * food['price']
+                lg = f'user.remove_item | {select} | '
+                if self.orders[select] == 0:
+                    print('You have no', select, 'in your order')
+                    del self.orders[select]
+                    lg += '0'
+                    return lg
+                print('** You have', self.orders[select], 'order(s) of', food['item'], 'for your meal **')
+                lg += str(self.orders[select])
+                return lg
+        lg = f'bad item | user.remove_item | {select}'
+        return lg
+
+    def display_order(self, MENU):
+        """ This displays the current state of what the user is ordering and
+            the current total cost of that order.
+        """
+        # later we will move the storage & computation of
+        # the user_cost (sub-total) to a class property
+        user_cost = 0
+        # The printout formatting maybe should be moved to an external function
+        line1 = 'Here is your current order.'
+        line2 = "You can 'quit', 'remove <item>', or view 'menu', 'order'"
+        print(dedent(f'''
+            {'*' * WIDTH}
+            {'** ' + ' ' * ((WIDTH - len(line1)) // 2 - 3) + line1 + ' ' * (((WIDTH - len(line1)) // 2 - 3) + len(line1)%2) + ' **'}
+            {'-' * WIDTH}
+            {'** ' + ' ' * ((WIDTH - len(self.uid) ) // 2 -3) + self.uid + ' ' * (((WIDTH - len(self.uid) ) // 2 - 3) + len(self.uid)%2) + ' **'}
+            {'-' * WIDTH}
+            {' Item' + ' ' * ((WIDTH - 44) // 2 + 6 ) + 'Quantity' + ' ' * ( WIDTH // 2 + (WIDTH - 44) % 2 - 3 ) + 'Price'}
+        '''))
+        for options in MENU:
+            # yes, refactor MENU as dict would be better. Get working for now
+            item = options['item'].lower()
+            if item in self.orders.keys():
+                # later we will move the storage & computation of
+                # the user_cost (sub-total) to a class property
+                item_cost = self.orders[item] * options['price']
+                # maybe aim for 25-30 for item, 5-6 for quantity, 8 for money
+                line = '{:30}'.format(options['item']) + '{:^5}'.format(self.orders[item]) + ' ' * (WIDTH - 42) + CURRANCY + '{:>6}'.format('{:.2f}'.format(item_cost))
+                print(dedent(f''' {line} '''))
+                user_cost += item_cost
+        if self.user_cost != user_cost:
+            print('Somehow our order tracking has an error')
+            print(f'Running ttl: {self.user_cost}, Computed ttl: {user_cost}')
+            print('We are giving you the lower computation')
+            user_cost = min(self.user_cost, user_cost)
+            self.user_cost = user_cost
+        print(dedent(f'''
+            Your order comes to: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost))}
+            Plus tax: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost * SALES_TAX))}
+            Total Bill: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost + user_cost * SALES_TAX))}
+            {'-' * WIDTH}
+            {'** ' + ' ' * ((WIDTH - len(line2)) // 2 - 3) + line2 + ' ' * (((WIDTH - len(line2)) // 2 - 3) + len(line2)%2) + ' **'}
+            {'*' * WIDTH}
+            What would you like to do now?
+        '''))
+        # we are assuming user is given an input prompt after this function
+
+    def print_receipt(self):
+        pass
+
+
 def greeting():
     """Function which will greet the user when the application executes for
     the first time.
@@ -267,84 +420,6 @@ def show_menu(selection, MENU):
     '''))
 
 
-def get_order(select, quantity, MENU):
-    """ Takes in a value that exists in our MENU item names (this has been
-        checked before this was called). Also takes in a quantity of how many
-        the user wants to add (often 1, but could be any integer). We need to
-        check if going to exceed the total stock we have of that item. In here
-        we will deal with output if their order is exceeding our stock. It
-        then adds this item to the user's order.
-    """
-    log = ''
-    for option in MENU:
-        if select == option['item'].lower():
-            # Aaccount for how much we have in stock
-            if option['status'] + quantity > option['stock']:
-                print("I'm sorry but we don't have enough of those left to add that to your order")
-                log = f'get_order | stock | {select}'
-                return log
-            option['status'] += quantity
-            item_cost = option['price'] * option['status']
-            # perhaps we deal with total cost later on.
-            print('** You have', option['status'], 'order(s) of', option['item'], 'adding', CURRANCY, '{:.2f}'.format(item_cost), 'for your meal **')
-            log = f"{option['item']} | {option['status']} | {item_cost}"
-    return log
-
-
-def current_sub_total(MENU):
-    """ We want to return cur   rent sub-total afer every command
-    """
-    user_cost = 0
-    for options in MENU:
-        if options['status'] > 0:
-            user_cost += options['status'] * options['price']
-    # [user_cost += food['status'] * food['price'] for food in MENU]
-    return user_cost
-
-
-def display_order(MENU):
-    """ This displays the current state of what the user is ordering and
-        the current total cost of that order.
-    """
-    user_cost = 0
-    uid = str(uuid.uuid4())
-    # The printout formatting maybe should be moved to an external function
-    line1 = 'Here is your current order.'
-    line2 = "You can 'quit', 'remove <item>', or view 'menu', 'order'"
-    print(dedent(f'''
-        {'*' * WIDTH}
-        {'** ' + ' ' * ((WIDTH - len(line1)) // 2 - 3) + line1 + ' ' * (((WIDTH - len(line1)) // 2 - 3) + len(line1)%2) + ' **'}
-        {'-' * WIDTH}
-        {'** ' + ' ' * ((WIDTH - len(uid) ) // 2 -3) + uid + ' ' * (((WIDTH - len(uid) ) // 2 - 3) + len(uid)%2) + ' **'}
-        {'-' * WIDTH}
-        {' Item' + ' ' * ((WIDTH - 44) // 2 + 6 ) + 'Quantity' + ' ' * ( WIDTH // 2 + (WIDTH - 44) % 2 - 3 ) + 'Price'}
-    '''))
-    for options in MENU:
-        if options['status'] > 0:
-            user_cost += options['status'] * options['price']
-            # remain_width = WIDTH - (len(options['items']) + len(options['status']) + 11)
-            # 25 to 30 for item, 5 for status, 8 for money
-            line = '{:30}'.format(options['item']) + '{:^6}'.format(options['status']) + ' ' * (WIDTH - 42) + CURRANCY + '{:>5}'.format('{:.2f}'.format(options['price']))
-            print(dedent(f''' {line} '''))
-
-            # print(line)
-            # line = 'You have ' + str(options['status']) + ' orders of ' +  options['item'] + ' for ' + CURRANCY + str(options['price'] * options['status'])
-            # print('** ' + ' ' * ((WIDTH - len(line)) // 2 - 3) + line + ' ' * (((WIDTH - len(line)) // 2 - 3) + len(line)%2) + ' **')
-            # print(dedent(f'''
-            #     {'** ' + ' ' * ((WIDTH - len(line)) // 2 - 3) + line + ' ' * (((WIDTH - len(line)) // 2 - 3) + len(line)%2) + ' **'}
-            # '''))
-    print(dedent(f'''
-        Your order comes to: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost))}
-        Plus tax: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost * SALES_TAX))}
-        Total Bill: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost + user_cost * SALES_TAX))}
-        {'-' * WIDTH}
-        {'** ' + ' ' * ((WIDTH - len(line2)) // 2 - 3) + line2 + ' ' * (((WIDTH - len(line2)) // 2 - 3) + len(line2)%2) + ' **'}
-        {'*' * WIDTH}
-        What would you like to do now?
-    '''))
-    # we are assuming user is given an input prompt after this function
-
-
 def goodbye():
     """Function will display a nice little sign-off section after user gave
     the input of 'quit'.
@@ -360,35 +435,7 @@ def goodbye():
     sys.exit()
 
 
-def remove_item(select, MENU):
-    """This will decrease the quantity of the given menu item from the
-    user's current selection. We have already made sure the input is a
-    valid menu item. However, we have not yet checked if the user
-    actually has any selected to purchase (be careful not to decrease
-    below zero).
-    """
-    lg = 'start'
-    for food in MENU:
-        if food['item'].lower() == select:
-            if food['status'] == 0:
-                print("Oh, it seems you don't have any", select, "so I don't need to remove anything")
-                lg = f'bad none | remove_item | {select}'
-                return lg
-            food['status'] -= 1
-            print('I have removed one', select, 'from your order')
-            lg = f'remove_item | {select} | '
-            if food['status'] == 0:
-                print('You have no', select, 'in your order')
-                lg += '0'
-                return lg
-            print('** You have', food['status'], 'order(s) of', food['item'], 'for your meal **')
-            lg += str(food['status'])
-            return lg
-    lg = f'bad item | remove_item | {select}'
-    return lg
-
-
-def parse_user_input(select, MENU):
+def parse_user_input(select, user, MENU):
     """ Gets an input from the user. Determines if it is a special command,
     and if so, calls the appropriate function. This is first called after
     the user initially sees the menu. It can handle the 'quit' command to
@@ -405,28 +452,57 @@ def parse_user_input(select, MENU):
         log = f'show_menu | {select}'
         return log
     if select == 'order':
-        display_order(MENU)  # disply their current order and total
-        log = f'display_order'
+        user.display_order(MENU)  # disply their current order and total
+        log = f'user.display_order'
         return log
+
+#     item = ''  # string to hold item name that may have spaces
+#     item_select = ''  # string holds possible <item> <quantity>
+#     command = ''  # if we discover it wants to delete or add, stored here
+# #    <command> item can have space <quantity>
+#     if select.split()[0] == 'remove':
+#         command, *select = select.split()
+#     elif select in [elem['item'].lower() for elem in MENU]:
+#         command, item = 'add', select
+
+#     if isinstance(select.split()[-1], int)
+
+#     elif select.split()[0] == 'remove':
+#         command, *item_select = select.split()
+#     else:
+#         item_select = select
+
+
+#     *temp, number = select.split()
+
     if select in [elem['item'].lower() for elem in MENU]:
-        get_order(select, 1, MENU)
-        log = f'get_order | {select} | 1'
+        user.add_item(select, MENU)
+        log = f'user.add_item | {select} | 1'
         return log
     # we need to try to split the command to see if it is remove, item
     # pair or if it is add-item, quantity
     if select.split()[0] == 'remove':
-        command, *item_select = select.split()
-        item_name = ' '.join(item_select)
+        command, *input_split = select.split()
+        try:
+            quantity = int(input_split[-1])
+        except ValueError:
+            quantity = 1
+            input_split.append(1)
+        item_name = ' '.join(input_split[:-1])
         if item_name in [elem['item'].lower() for elem in MENU]:
-            remove_item(item_name, MENU)
-            log = f'remove_item | {item_name}'
+            # need to check for removing an invalid amount.
+            if quantity < 1:
+                log = f'bad remove not_positive_int | {quantity}'
+                return log
+            user.remove_item(item_name, MENU, quantity)
+            log = f'user.remove_item | {item_name} | {quantity}'
             return log
-        log = f'bad | remove_item | {item_name}'
+        log = f'bad | user.remove_item | {item_name}'
         return log
     lst = select.split()
     try:
         quantity = int(lst[-1])
-    except:
+    except ValueError:
         log = f'bad not_int | {lst[-1]}'
         return log
     if quantity < 1:
@@ -434,10 +510,10 @@ def parse_user_input(select, MENU):
         return log
     item_name = ' '.join(lst[:-1])
     if item_name in [elem['item'].lower() for elem in MENU]:
-        get_order(item_name, quantity, MENU)
-        log = f'get_order | {item_name} | {quantity}'
+        user.add_item(item_name, MENU, quantity)
+        log = f'user.add_item | {item_name} | {quantity}'
         return log
-    log = f'bad | get_order | {item_name} | {quantity}'
+    log = f'bad | user.add_item | {item_name} | {quantity}'
     return log
 
 
@@ -496,14 +572,15 @@ def run():
     MENU = select_menu()
     greeting()
     show_menu('menu', MENU)
+    user = Order()
     select = ''
     while select != 'quit':
         select = str(input('<: ')).lower()
-        select = parse_user_input(select, MENU)  # This does most of our programs work
+        select = parse_user_input(select, user, MENU)  # This does most of our programs work
         if select.split(' ')[0] == 'bad':
             print('** Sorry, I am not sure I understood what you wanted **')
         print(select)
-        print('Current Sub-Total: ', CURRANCY, '{:.2f}'.format(current_sub_total(MENU)))
+        print('Current Sub-Total: ', CURRANCY, '{:.2f}'.format(user.user_cost))
     goodbye()
 
 
