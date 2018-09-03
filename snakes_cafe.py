@@ -2,7 +2,6 @@ from textwrap import dedent
 import uuid
 import sys
 
-
 # USER_TOTAL = 0
 CURRANCY = '$'
 SALES_TAX = 0.096
@@ -334,20 +333,64 @@ class Order(object):
         """ This displays the current state of what the user is ordering and
             the current total cost of that order.
         """
-        # later we will move the storage & computation of
-        # the user_cost (sub-total) to a class property
+        content = self._prep_order(MENU)
+        for line in content:
+            print(line)
+        # user_cost = 0
+        # # The printout formatting maybe should be moved to an external function
+        # line1 = 'Here is your current order.'
+        # line2 = "You can 'quit', 'remove <item>', or view 'menu', 'order'"
+        # print(dedent(f'''
+        #     {'*' * WIDTH}
+        #     {'** ' + ' ' * ((WIDTH - len(line1)) // 2 - 3) + line1 + ' ' * (((WIDTH - len(line1)) // 2 - 3) + len(line1)%2) + ' **'}
+        #     {'-' * WIDTH}
+        #     {'** ' + ' ' * ((WIDTH - len(self.uid) ) // 2 -3) + self.uid + ' ' * (((WIDTH - len(self.uid) ) // 2 - 3) + len(self.uid)%2) + ' **'}
+        #     {'-' * WIDTH}
+        #     {' Item' + ' ' * ((WIDTH - 44) // 2 + 6 ) + 'Quantity' + ' ' * ( WIDTH // 2 + (WIDTH - 44) % 2 - 3 ) + 'Price'}
+        # '''))
+        # for options in MENU:
+        #     # yes, refactor MENU as dict would be better. Get working for now
+        #     item = options['item'].lower()
+        #     if item in self.orders.keys():
+        #         # later we will move the storage & computation of
+        #         # the user_cost (sub-total) to a class property
+        #         item_cost = self.orders[item] * options['price']
+        #         # maybe aim for 25-30 for item, 5-6 for quantity, 8 for money
+        #         line = '{:30}'.format(options['item']) + '{:^5}'.format(self.orders[item]) + ' ' * (WIDTH - 42) + CURRANCY + '{:>6}'.format('{:.2f}'.format(item_cost))
+        #         print(dedent(f''' {line} '''))
+        #         user_cost += item_cost
+        # if self.user_cost != user_cost:
+        #     print('Somehow our order tracking has an error')
+        #     print(f'Running ttl: {self.user_cost}, Computed ttl: {user_cost}')
+        #     print('We are giving you the lower computation')
+        #     user_cost = min(self.user_cost, user_cost)
+        #     self.user_cost = user_cost
+        # print(dedent(f'''
+        #     Your order comes to: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost))}
+        #     Plus tax: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost * SALES_TAX))}
+        #     Total Bill: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost + user_cost * SALES_TAX))}
+        #     {'-' * WIDTH}
+        #     {'** ' + ' ' * ((WIDTH - len(line2)) // 2 - 3) + line2 + ' ' * (((WIDTH - len(line2)) // 2 - 3) + len(line2)%2) + ' **'}
+        #     {'*' * WIDTH}
+        #     What would you like to do now?
+        # '''))
+
+        # we are assuming user is given an input prompt after this function
+
+    def _prep_order(self, MENU):
+        """ This prepares the text lines for both the display_order
+            and print_receipt methods.
+        """
         user_cost = 0
-        # The printout formatting maybe should be moved to an external function
         line1 = 'Here is your current order.'
         line2 = "You can 'quit', 'remove <item>', or view 'menu', 'order'"
-        print(dedent(f'''
-            {'*' * WIDTH}
-            {'** ' + ' ' * ((WIDTH - len(line1)) // 2 - 3) + line1 + ' ' * (((WIDTH - len(line1)) // 2 - 3) + len(line1)%2) + ' **'}
-            {'-' * WIDTH}
-            {'** ' + ' ' * ((WIDTH - len(self.uid) ) // 2 -3) + self.uid + ' ' * (((WIDTH - len(self.uid) ) // 2 - 3) + len(self.uid)%2) + ' **'}
-            {'-' * WIDTH}
-            {' Item' + ' ' * ((WIDTH - 44) // 2 + 6 ) + 'Quantity' + ' ' * ( WIDTH // 2 + (WIDTH - 44) % 2 - 3 ) + 'Price'}
-        '''))
+        content = []
+        content.append('*' * WIDTH)
+        content.append('** ' + ' ' * ((WIDTH - len(line1)) // 2 - 3) + line1 + ' ' * (((WIDTH - len(line1)) // 2 - 3) + len(line1)%2) + ' **')
+        content.append('-' * WIDTH)
+        content.append('** ' + ' ' * ((WIDTH - len(self.uid)) // 2 -3) + self.uid + ' ' * (((WIDTH - len(self.uid)) // 2 - 3) + len(self.uid) % 2) + ' **')
+        content.append('-' * WIDTH)
+        content.append(' Item' + ' ' * ((WIDTH - 44) // 2 + 6) + 'Quantity' + ' ' * (WIDTH // 2 + (WIDTH - 44) % 2 - 3) + 'Price')
         for options in MENU:
             # yes, refactor MENU as dict would be better. Get working for now
             item = options['item'].lower()
@@ -357,27 +400,41 @@ class Order(object):
                 item_cost = self.orders[item] * options['price']
                 # maybe aim for 25-30 for item, 5-6 for quantity, 8 for money
                 line = '{:30}'.format(options['item']) + '{:^5}'.format(self.orders[item]) + ' ' * (WIDTH - 42) + CURRANCY + '{:>6}'.format('{:.2f}'.format(item_cost))
-                print(dedent(f''' {line} '''))
+                content.append(line)
                 user_cost += item_cost
         if self.user_cost != user_cost:
-            print('Somehow our order tracking has an error')
-            print(f'Running ttl: {self.user_cost}, Computed ttl: {user_cost}')
-            print('We are giving you the lower computation')
+            content.append('Somehow our order tracking has an error')
+            content.append(f'Running ttl: {self.user_cost}, Computed ttl: {user_cost}')
+            content.append('We are giving you the lower computation')
             user_cost = min(self.user_cost, user_cost)
             self.user_cost = user_cost
-        print(dedent(f'''
-            Your order comes to: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost))}
-            Plus tax: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost * SALES_TAX))}
-            Total Bill: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost + user_cost * SALES_TAX))}
-            {'-' * WIDTH}
-            {'** ' + ' ' * ((WIDTH - len(line2)) // 2 - 3) + line2 + ' ' * (((WIDTH - len(line2)) // 2 - 3) + len(line2)%2) + ' **'}
-            {'*' * WIDTH}
-            What would you like to do now?
-        '''))
-        # we are assuming user is given an input prompt after this function
+        content.append(f'''Your order comes to: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost))}''')
+        content.append(f'''Plus tax: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost * SALES_TAX))}''')
+        content.append(f'''Total Bill: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost + user_cost * SALES_TAX))}''')
+        content.append(f'''{'-' * WIDTH}''')
+        content.append(f'''{'** ' + ' ' * ((WIDTH - len(line2)) // 2 - 3) + line2 + ' ' * (((WIDTH - len(line2)) // 2 - 3) + len(line2)%2) + ' **'}''')
+        content.append(f'''{'*' * WIDTH}''')
+        content.append(f'''What would you like to do now?''')
+        return content
 
-    def print_receipt(self):
-        pass
+    def print_receipt(self, MENU):
+        """ This will create a file so that we have a record of this order
+            The created file name will be the order uuid.txt
+            The output will look the same as display_order
+        """
+        filename = f'{self.uid}.txt'
+
+        f = open(filename, "w+")
+        # setup capture of stdout
+        content = self._prep_order(MENU)
+        for line in content:
+            f.write(line + '\n')
+        # self.display_order(MENU)
+        # out, err = sys.capsys.readouterr()
+        # out = out.split('\n')
+        # for lines in out:
+        #     f.write(lines, '\n')
+        f.close()
 
 
 def greeting():
@@ -446,6 +503,9 @@ def parse_user_input(select, user, MENU):
     quantity = 0
     log = ''
     if select == 'quit' or select == '':
+        return select
+    if select == 'print':
+        user.print_receipt(MENU)
         return select
     if select == 'menu' or select.capitalize() in COURSES:
         show_menu(select.capitalize(), MENU)
