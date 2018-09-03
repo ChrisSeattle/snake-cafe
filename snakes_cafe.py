@@ -3,7 +3,7 @@ import uuid
 import sys
 
 # USER_TOTAL = 0
-CURRANCY = '$'
+CURRENCY = '$'
 SALES_TAX = 0.096
 WIDTH = 78
 MENU_FILE = 'menu_file.csv'
@@ -222,44 +222,36 @@ DEFAULT_MENU = [
     },
 ]
 COURSES = ['Appetizers', 'Entrees', 'Desserts', 'Drinks', 'Sides',]
-# USER_COMMANDS = {'menu', 'order', 'remove', 'quit', }
+# USER_COMMANDS = {'menu', 'order', 'remove', 'quit', 'print' }
 # perhaps we don't want USER_COMMANDS, reconsider when looking at future features
 
 
 class Order(object):
     """ A user's orders will stored using this class.
     """
-    def __init__(self, ):
+    def __init__(self, currency, menu):
         """
         """
-        self.total_items = 0
+        self.currency = currency  # currency symbol for this order
+        self.menu = menu  # which menu is user currently ordering from
+        self._total_items = 0
         self.user_cost = 0
         self.uid = str(uuid.uuid4())
         self.orders = dict()
-        # item/name: count of ordered
+        # orders name: key is item/name: count of ordered
         # for each item user has ordered from MENU list
-        # MENU list has dict of item/name, category, price, status/unused, # avaliable,
+        # MENU list has dict of item/name, category, price, avail stock
 
     def __len__(self):
-        return self.total_items
+        return self._total_items
 
     def __str__(self):
         return self.display_order()
 
     def __repr__(self):
-        return f'''<Order {self.uid} | Items: {self.total_items} | Total: {CURRANCY} {self.user_cost}>'''
+        return f'''<Order {self.uid} | Items: {self._total_items} | Total: {self.currency} {self.user_cost}>'''
 
-    def current_sub_total(self, MENU):
-        """ We want to return current sub-total afer every command
-        """
-        user_cost = 0
-        for options in MENU:
-            if options['status'] > 0:
-                user_cost += options['status'] * options['price']
-        # [user_cost += food['status'] * food['price'] for food in MENU]
-        return user_cost
-
-    def add_item(self, select, MENU, quantity=1):
+    def add_item(self, select, quantity=1):
         """ Takes in a value that exists in our MENU item names (this has been
             checked before this was called). Also takes in a quantity of how many
             the user wants to add (often 1, but could be any integer). We need to
@@ -267,11 +259,7 @@ class Order(object):
             we will deal with output if their order is exceeding our stock. It
             then adds this item to the user's order.
         """
-        # old version option['status'] to store how many user wants in the store's MENU item object
-        # new: self.orders[item/name] = count of how many user has
-        # therefore: self.orders[select] += quantity if it exists, or insert and = quantity if not
-        #                   at same time, self.total_items += quantity
-
+        MENU = self.menu
         log = 'no items'  # over-written later
         for option in MENU:
             if select == option['item'].lower():
@@ -284,24 +272,26 @@ class Order(object):
                     log = f'bad stock | user.add_item | {select} | {quantity}'
                     return log
                 self.orders[select] += quantity
-                self.total_items += quantity
+                self._total_items += quantity
                 # item_cost = option['price'] * self.orders[select]
                 add_cost = option['price'] * quantity
                 self.user_cost += add_cost
-                print('** You added', quantity, 'order(s) of', option['item'], 'adding', CURRANCY, '{:.2f}'.format(add_cost), 'for your meal **')
-                log = f'user.add_items | {select} | {quantity}'
+                print('** You added', quantity, 'order(s) of', option['item'], 'adding', CURRENCY, '{:.2f}'.format(add_cost), 'for your meal **')
+                log = f'user.add_item | {select} | {quantity}'
+                # if we don't actually have any of this item, remove from keys
+                if self.orders[select] == 0:
+                    del self.orders[select]
         return log
 
-    def remove_item(self, select, MENU, quantity=1):
+    def remove_item(self, select, quantity=1):
         """This will decrease the quantity of the given menu item from the
             user's current selection. We have already made sure the input is a
             valid menu item. However, we have not yet checked if the user
             actually has any selected to purchase (be careful not to decrease
             below zero).
-            """
+        """
+        MENU = self.menu
         lg = 'start'  # over-written later
-        # old food['status'] for when we stored it in the cafe MENU
-        # new: self.orders[select] to track in this user's Order
         for food in MENU:
             if food['item'].lower() == select:
                 # make sure user actually has some in orders
@@ -314,7 +304,7 @@ class Order(object):
                     print("Since you only have", self.orders[select], "I'll remove all of them")
                     quantity = self.orders[select]
                 self.orders[select] -= quantity
-                self.total_items -= quantity
+                self._total_items -= quantity
                 print('I have removed', quantity, 'of', select, 'from your order')
                 self.user_cost -= quantity * food['price']
                 lg = f'user.remove_item | {select} | '
@@ -329,77 +319,38 @@ class Order(object):
         lg = f'bad item | user.remove_item | {select}'
         return lg
 
-    def display_order(self, MENU):
+    def display_order(self):
         """ This displays the current state of what the user is ordering and
             the current total cost of that order.
         """
-        content = self._prep_order(MENU)
-        for line in content:
+        long_string = ''
+        for line in self._prep_order():
+            long_string += line + '\n'
             print(line)
-        # user_cost = 0
-        # # The printout formatting maybe should be moved to an external function
-        # line1 = 'Here is your current order.'
-        # line2 = "You can 'quit', 'remove <item>', or view 'menu', 'order'"
-        # print(dedent(f'''
-        #     {'*' * WIDTH}
-        #     {'** ' + ' ' * ((WIDTH - len(line1)) // 2 - 3) + line1 + ' ' * (((WIDTH - len(line1)) // 2 - 3) + len(line1)%2) + ' **'}
-        #     {'-' * WIDTH}
-        #     {'** ' + ' ' * ((WIDTH - len(self.uid) ) // 2 -3) + self.uid + ' ' * (((WIDTH - len(self.uid) ) // 2 - 3) + len(self.uid)%2) + ' **'}
-        #     {'-' * WIDTH}
-        #     {' Item' + ' ' * ((WIDTH - 44) // 2 + 6 ) + 'Quantity' + ' ' * ( WIDTH // 2 + (WIDTH - 44) % 2 - 3 ) + 'Price'}
-        # '''))
-        # for options in MENU:
-        #     # yes, refactor MENU as dict would be better. Get working for now
-        #     item = options['item'].lower()
-        #     if item in self.orders.keys():
-        #         # later we will move the storage & computation of
-        #         # the user_cost (sub-total) to a class property
-        #         item_cost = self.orders[item] * options['price']
-        #         # maybe aim for 25-30 for item, 5-6 for quantity, 8 for money
-        #         line = '{:30}'.format(options['item']) + '{:^5}'.format(self.orders[item]) + ' ' * (WIDTH - 42) + CURRANCY + '{:>6}'.format('{:.2f}'.format(item_cost))
-        #         print(dedent(f''' {line} '''))
-        #         user_cost += item_cost
-        # if self.user_cost != user_cost:
-        #     print('Somehow our order tracking has an error')
-        #     print(f'Running ttl: {self.user_cost}, Computed ttl: {user_cost}')
-        #     print('We are giving you the lower computation')
-        #     user_cost = min(self.user_cost, user_cost)
-        #     self.user_cost = user_cost
-        # print(dedent(f'''
-        #     Your order comes to: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost))}
-        #     Plus tax: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost * SALES_TAX))}
-        #     Total Bill: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost + user_cost * SALES_TAX))}
-        #     {'-' * WIDTH}
-        #     {'** ' + ' ' * ((WIDTH - len(line2)) // 2 - 3) + line2 + ' ' * (((WIDTH - len(line2)) // 2 - 3) + len(line2)%2) + ' **'}
-        #     {'*' * WIDTH}
-        #     What would you like to do now?
-        # '''))
+        return long_string
 
-        # we are assuming user is given an input prompt after this function
-
-    def _prep_order(self, MENU):
+    def _prep_order(self):
         """ This prepares the text lines for both the display_order
             and print_receipt methods.
         """
+        MENU = self.menu
         user_cost = 0
         line1 = 'Here is your current order.'
-        line2 = "You can 'quit', 'remove <item>', or view 'menu', 'order'"
+        line2 = "Choose: 'quit', 'remove <item>', view 'menu', 'order', or 'print'"
         content = []
         content.append('*' * WIDTH)
         content.append('** ' + ' ' * ((WIDTH - len(line1)) // 2 - 3) + line1 + ' ' * (((WIDTH - len(line1)) // 2 - 3) + len(line1)%2) + ' **')
         content.append('-' * WIDTH)
-        content.append('** ' + ' ' * ((WIDTH - len(self.uid)) // 2 -3) + self.uid + ' ' * (((WIDTH - len(self.uid)) // 2 - 3) + len(self.uid) % 2) + ' **')
+        content.append('** ' + ' ' * ((WIDTH - len(self.uid)) // 2 - 3) + self.uid + ' ' * (((WIDTH - len(self.uid)) // 2 - 3) + len(self.uid) % 2) + ' **')
         content.append('-' * WIDTH)
         content.append(' Item' + ' ' * ((WIDTH - 44) // 2 + 6) + 'Quantity' + ' ' * (WIDTH // 2 + (WIDTH - 44) % 2 - 3) + 'Price')
         for options in MENU:
             # yes, refactor MENU as dict would be better. Get working for now
             item = options['item'].lower()
             if item in self.orders.keys():
-                # later we will move the storage & computation of
-                # the user_cost (sub-total) to a class property
                 item_cost = self.orders[item] * options['price']
                 # maybe aim for 25-30 for item, 5-6 for quantity, 8 for money
-                line = '{:30}'.format(options['item']) + '{:^5}'.format(self.orders[item]) + ' ' * (WIDTH - 42) + CURRANCY + '{:>6}'.format('{:.2f}'.format(item_cost))
+                line = '{:30}'.format(options['item']) + '{:^5}'.format(self.orders[item]) + ' ' * (WIDTH - 42) + CURRENCY + '{:>6}'.format('{:.2f}'.format(item_cost))
                 content.append(line)
                 user_cost += item_cost
         if self.user_cost != user_cost:
@@ -408,34 +359,36 @@ class Order(object):
             content.append('We are giving you the lower computation')
             user_cost = min(self.user_cost, user_cost)
             self.user_cost = user_cost
-        content.append(f'''Your order comes to: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost))}''')
-        content.append(f'''Plus tax: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost * SALES_TAX))}''')
-        content.append(f'''Total Bill: {CURRANCY} {'{:>6}'.format('{:.2f}'.format(user_cost + user_cost * SALES_TAX))}''')
+        content.append(f'''Your order comes to: {CURRENCY} {'{:>6}'.format('{:.2f}'.format(user_cost))}''')
+        content.append(f'''Plus tax: {CURRENCY} {'{:>6}'.format('{:.2f}'.format(user_cost * SALES_TAX))}''')
+        content.append(f'''Total Bill: {CURRENCY} {'{:>6}'.format('{:.2f}'.format(user_cost + user_cost * SALES_TAX))}''')
         content.append(f'''{'-' * WIDTH}''')
         content.append(f'''{'** ' + ' ' * ((WIDTH - len(line2)) // 2 - 3) + line2 + ' ' * (((WIDTH - len(line2)) // 2 - 3) + len(line2)%2) + ' **'}''')
         content.append(f'''{'*' * WIDTH}''')
         content.append(f'''What would you like to do now?''')
         return content
 
-    def print_receipt(self, MENU):
+    def print_receipt(self, path=None):
         """ This will create a file so that we have a record of this order
             The created file name will be the order uuid.txt
             The output will look the same as display_order
         """
+        content = self._prep_order()
         filename = f'{self.uid}.txt'
-
-        f = open(filename, "w+")
-        # setup capture of stdout
-        content = self._prep_order(MENU)
-        for line in content:
-            f.write(line + '\n')
-        # self.display_order(MENU)
-        # out, err = sys.capsys.readouterr()
-        # out = out.split('\n')
-        # for lines in out:
-        #     f.write(lines, '\n')
-        f.close()
-
+        if path is not None:
+            filename = path + filename
+            # put in for testing if somehow we can't create file at a location
+            # do we want to throw away a given path?
+        try:
+            with open(filename, "w+") as f:
+                for line in content:
+                    f.write(line + '\n')
+                # f.close()
+                # Not neccassary to 'close()' a file when using 'with'
+        except IOError:
+            print("File not found or path is incorrect")
+            return f'<bad user.print_receipt | {filename}>'
+        return f'<user.print_receipt | {filename}>'
 
 def greeting():
     """Function which will greet the user when the application executes for
@@ -466,7 +419,7 @@ def show_menu(selection, MENU):
         print('\n** ', section, '\n** ', '-' * 8)
         for option in MENU:
             if option['category'] == section:
-                print('** ', option['item'], ' ' * (WIDTH - len(option['item']) - 17), CURRANCY, '{:>5}'.format('{:.2f}'.format(option['price'])), ' **')
+                print('** ', option['item'], ' ' * (WIDTH - len(option['item']) - 17), CURRENCY, '{:>5}'.format('{:.2f}'.format(option['price'])), ' **')
     ask = 'What would you like to order?'
     instructions = "You can view your 'order', or type the food you want to add"
     print(dedent(f'''
@@ -496,51 +449,34 @@ def parse_user_input(select, user, MENU):
     """ Gets an input from the user. Determines if it is a special command,
     and if so, calls the appropriate function. This is first called after
     the user initially sees the menu. It can handle the 'quit' command to
-    exit, and otherwise it keeps looping asking and handling the user's request.
+    exit, and otherwise it keeps looping asking and handling user's request.
     The user can request to see all, or some sections of the menu, to remove
-    1 item in their order, to view their current order and total, or to quit
+    1 or multiple of a certain item in their order, to add 1 or multiple of an
+    item, to view their current order with total, to print a receipt, or quit
     """
+    # Valid Inputs: quit, print, order, menu, <menu-section>,
+    # remove <item> [quantity], <item> [quantity]
     quantity = 0
     log = ''
     if select == 'quit' or select == '':
         return select
     if select == 'print':
-        user.print_receipt(MENU)
-        return select
+        log = user.print_receipt()
+        return log
     if select == 'menu' or select.capitalize() in COURSES:
         show_menu(select.capitalize(), MENU)
         log = f'show_menu | {select}'
         return log
     if select == 'order':
-        user.display_order(MENU)  # disply their current order and total
+        user.display_order()  # disply their current order and total
         log = f'user.display_order'
         return log
-
-#     item = ''  # string to hold item name that may have spaces
-#     item_select = ''  # string holds possible <item> <quantity>
-#     command = ''  # if we discover it wants to delete or add, stored here
-# #    <command> item can have space <quantity>
-#     if select.split()[0] == 'remove':
-#         command, *select = select.split()
-#     elif select in [elem['item'].lower() for elem in MENU]:
-#         command, item = 'add', select
-
-#     if isinstance(select.split()[-1], int)
-
-#     elif select.split()[0] == 'remove':
-#         command, *item_select = select.split()
-#     else:
-#         item_select = select
-
-
-#     *temp, number = select.split()
-
     if select in [elem['item'].lower() for elem in MENU]:
-        user.add_item(select, MENU)
+        user.add_item(select)
         log = f'user.add_item | {select} | 1'
         return log
     # we need to try to split the command to see if it is remove, item
-    # pair or if it is add-item, quantity
+    # pair or if it is add_item. Also deal with optional quantity of each
     if select.split()[0] == 'remove':
         command, *input_split = select.split()
         try:
@@ -550,11 +486,11 @@ def parse_user_input(select, user, MENU):
             input_split.append(1)
         item_name = ' '.join(input_split[:-1])
         if item_name in [elem['item'].lower() for elem in MENU]:
-            # need to check for removing an invalid amount.
+            # check for removing an invalid amount.
             if quantity < 1:
                 log = f'bad remove not_positive_int | {quantity}'
                 return log
-            user.remove_item(item_name, MENU, quantity)
+            user.remove_item(item_name, quantity)
             log = f'user.remove_item | {item_name} | {quantity}'
             return log
         log = f'bad | user.remove_item | {item_name}'
@@ -570,7 +506,7 @@ def parse_user_input(select, user, MENU):
         return log
     item_name = ' '.join(lst[:-1])
     if item_name in [elem['item'].lower() for elem in MENU]:
-        user.add_item(item_name, MENU, quantity)
+        user.add_item(item_name, quantity)
         log = f'user.add_item | {item_name} | {quantity}'
         return log
     log = f'bad | user.add_item | {item_name} | {quantity}'
@@ -594,7 +530,6 @@ def get_menu(new_menu):
                 food['category'] = str(c)
                 food['price'] = float(p)
                 food['stock'] = int(s)
-                food['status'] = 0  # Initialze the count for how many the user has selected
                 menu_made.append(food)
         # Not neccassary to 'close()' a file when using 'with'
     except FileNotFoundError:
@@ -617,6 +552,7 @@ def select_menu():
     if menu_input == '2':
         menu_input = MENU_FILE
     file_structure = menu_input.split('/')
+    # we will throw away the file path when calling get_menu
     file = file_structure[len(file_structure)-1].split('.')
     extension = file[len(file)-1]
     if extension != 'csv':
@@ -632,15 +568,15 @@ def run():
     MENU = select_menu()
     greeting()
     show_menu('menu', MENU)
-    user = Order()
+    user = Order(CURRENCY, MENU)
     select = ''
     while select != 'quit':
         select = str(input('<: ')).lower()
-        select = parse_user_input(select, user, MENU)  # This does most of our programs work
+        select = parse_user_input(select, user, MENU)
         if select.split(' ')[0] == 'bad':
             print('** Sorry, I am not sure I understood what you wanted **')
         print(select)
-        print('Current Sub-Total: ', CURRANCY, '{:.2f}'.format(user.user_cost))
+        print('Current Sub-Total: ', CURRENCY, '{:.2f}'.format(user.user_cost))
     goodbye()
 
 
