@@ -51,13 +51,13 @@ def test_order_add_item_item_few(user):
 
 
 def test_order_remove_item_exits():
-    """ Can we see the function
+    """ Can we see the remove_item method of Order
     """
     assert Order.remove_item
 
 
 def test_order_remove_item_when_item_not_in_current_order(user):
-    """ If we don't add an item in advance, test our response on remove attempt
+    """ If we don't add_item in advance, test our response on remove_item
     """
     input = 'Blood of the Innocent'.lower()
     expected = f'user.remove_item | had none | {input}'
@@ -66,7 +66,7 @@ def test_order_remove_item_when_item_not_in_current_order(user):
 
 
 def test_remove_the_recently_added_single_item(user):
-    """ Add a single item from MENU, then do we remove it
+    """ Give a valid input for add_item, does remove_item function correctly
     """
     input = 'fries'.lower()
     expected = f'user.remove_item | {input} | ' + '0'
@@ -77,7 +77,7 @@ def test_remove_the_recently_added_single_item(user):
 
 
 def test_remove_the_recently_added_multiple_item(user):
-    """ Add a single item from MENU, then do we remove it
+    """ Add multiple of an item, does Order.remove_item remove 1
     """
     input = 'wings'.lower()
     quantitity = 5
@@ -87,8 +87,21 @@ def test_remove_the_recently_added_multiple_item(user):
     assert actual == expected
 
 
+def test_remove_multiple_item(user):
+    """ Add multiple of an item, can remove_item accuratly take quantity parameter
+    """
+    input = 'wings'.lower()
+    add_count = 5
+    remove_count = 3
+    expected_count = add_count - remove_count
+    expected = f'user.remove_item | {input} | ' + str(expected_count)
+    user.add_item(input, add_count)
+    actual = user.remove_item(input, remove_count)
+    assert actual == expected
+
+
 def test_order_remove_item_that_is_not_in_menu(user):
-    """ Does test_remove manage when asked to remove an item
+    """ Does remove_item manage when asked to remove an item
         that isn't even a valid item for our MENU
     """
     input = 'asdfghkl'.lower()
@@ -226,9 +239,6 @@ def test_order_print_receipt_error(user):
     expected = f'<bad user.print_receipt | {file_error}.txt>'
     output = user.print_receipt(path_error)
     assert output == expected
-
-
-# ========== End of methods in the Order class ============= #
 
 
 def test_get_menu_exists():

@@ -74,29 +74,15 @@ Code 04:
 - [x] Every menu category should have at least 9 items (optional for 12)
 - [x] Create a checklist to list the specifications
 
-=======================
-Self ToDo:
-- [x] Move the total items, sub-total / user_cost to always track and store in Order init properties
-- [x] Move price tracking to property of Order class
-- [x] update the repeated printout of current sub-total
-- [x] Push ordered food object (or name: quantity) to the user instance of Order.
-- [x] fix item total on order printout
-- [x] Allow user to input remove <item> <quantity>. Currently only remove <item> works as default 1 quantity
-- [x] If we couldn't add the item, don't let it sit at quantity of 0, remove it
-- [ ] remove the log feedback from user experience
-
-======================
-
 General Process:
 - [x] New branch as directed
 - [x] directory, starter files, and general setup
 - [x] Create an updated feature checklist to use at submission time
-- [ ] Docstring to all functions in main and test files.
-- [ ] Keep functions small, concise, and testable
+- [x] Docstring to all functions in main and test files.
+- [x] Keep functions small, concise, and testable
 - [ ] Update the readme file
-- [ ] Update the checklist
-- [ ] Create tests for all functionality of the program.
-- [ ] Have tests for all functions except __name__ block, and simple prinout functions
-- [ ] List out in words each test I intend to write
-- [ ] If (when) I change my tests, update my test_plan.md file
-- [ ] For each test, name the function or functions I intend to call and test
+- [x] Update the checklist
+- [x] Create tests for all functionality of the program.
+- [x] Have tests for all functions except __name__ block, and simple prinout functions
+- [x] List out in words each test I intend to write
+- [x] If (when) I change my tests, update my test_plan.md file
